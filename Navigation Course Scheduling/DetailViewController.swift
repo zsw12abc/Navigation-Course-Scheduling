@@ -14,9 +14,9 @@ class DetailViewController: UIViewController, UIPickerViewDelegate, UIPickerView
     var type: String?;
     var datePicker:UIDatePicker!
     var itemPicker: UIPickerView!
-    var itemList: Array<PFObject>?;
+    var itemList: Array<PFObject> = [];
     var dateList: Array<NSDate>?;
-    var itemName: Array<String>?;
+    var itemName: Array<String> = [];
     
     @IBOutlet weak var dateTextField: UITextField!
     @IBOutlet weak var itemTextField: UITextField!
@@ -28,13 +28,44 @@ class DetailViewController: UIViewController, UIPickerViewDelegate, UIPickerView
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         self.navigationItem.title = "add new \(type!)";
-        self.datePickerChosen();
-        self.itemPickerChosen();
+        print("type: \(type)");
+        if (type! == "Course") {
+            downloadData("Lecturer");
+        }else{
+            downloadData("Course");
+        }
     }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    
+    func downloadData(type: String){
+        let query = PFQuery(className: type);
+        query.findObjectsInBackgroundWithBlock {
+            (objects: [PFObject]?, error: NSError?) -> Void in
+            if error == nil {
+                // The find succeeded.
+                print("Successfully retrieved \(objects!.count) scores.")
+                // Do something with the found objects
+                if let objects = objects {
+                    for object in objects {
+                        print("\(type): \(object.objectId)");
+                        self.itemName.append(object["name"] as! String);
+                        self.itemList.append(object);
+                    }
+                    self.datePickerChosen();
+                    self.itemPickerChosen();
+                   self.itemPicker.reloadAllComponents();
+                }
+            } else {
+                // Log details of the failure
+                print("Error: \(error!) \(error!.userInfo)")
+            }
+        }
+    }
+
     
     func datePickerChosen() {
         let customView:UIView = UIView (frame: CGRectMake(0, 100, self.view.frame.size.width, 160))
@@ -80,9 +111,9 @@ class DetailViewController: UIViewController, UIPickerViewDelegate, UIPickerView
     
     func itemPickerSelected(){
         print(itemTextField.text);
-        let item = itemName![itemPicker.selectedRowInComponent(0)];
+        let item = itemName[itemPicker.selectedRowInComponent(0)];
         if itemTextField.text == "" {
-            itemTextField.text = item as! String
+            itemTextField.text = item 
         } else {
             itemTextField.text = "\(itemTextField.text!); \(item)"
         }
@@ -95,21 +126,12 @@ class DetailViewController: UIViewController, UIPickerViewDelegate, UIPickerView
     
     // The number of rows of data
     func pickerView(pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        if ((itemList?.count) == nil) {
-            return 0
-        }else{
-            return itemList!.count
-        }
+        return itemList.count
     }
     
     // The data to return for the row and component (column) that's being passed in
     func pickerView(pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        if (itemName != nil){
-            return itemName![row]
-        }else{
-            return nil
-        }
-        
+        return itemName[row]
     }
 
     
@@ -130,6 +152,7 @@ class DetailViewController: UIViewController, UIPickerViewDelegate, UIPickerView
         itemTextField.resignFirstResponder();
     }
     @IBAction func saveButtonPressed(sender: UIButton) {
+        
         
     }
 }
