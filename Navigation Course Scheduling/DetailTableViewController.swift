@@ -23,32 +23,37 @@ class DetailTableViewController: ViewController, UITableViewDataSource, UITableV
         super.viewWillAppear(animated);
         self.navigationItem.title = type;
         if (type != nil) {
-            let query = PFQuery(className: type!);
-            query.findObjectsInBackgroundWithBlock {
-                (objects: [PFObject]?, error: NSError?) -> Void in
-                if error == nil {
-                    // The find succeeded.
-                    print("Successfully retrieved \(objects!.count) scores.")
-                    // Do something with the found objects
-                    if let objects = objects {
-                        for object in objects {
-                            print("\(self.type): \(object.objectId)");
-                            self.detailIDList.append(object.objectId!);
-                            self.detailObjectList.append(object);
-                            self.tableView.reloadData();
-                        }
-                    }
-                } else {
-                    // Log details of the failure
-                    print("Error: \(error!) \(error!.userInfo)")
-                }
-            }
+            downloadData(type!);
         }
     }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning();
         // Dispose of any resources that can be recreated.
+    }
+    
+    
+    func downloadData(type: String){
+        let query = PFQuery(className: type);
+        query.findObjectsInBackgroundWithBlock {
+            (objects: [PFObject]?, error: NSError?) -> Void in
+            if error == nil {
+                // The find succeeded.
+                print("Successfully retrieved \(objects!.count) scores.")
+                // Do something with the found objects
+                if let objects = objects {
+                    for object in objects {
+                        print("\(self.type): \(object.objectId)");
+                        self.detailIDList.append(object.objectId!);
+                        self.detailObjectList.append(object);
+                    }
+                }
+                self.tableView.reloadData();
+            } else {
+                // Log details of the failure
+                print("Error: \(error!) \(error!.userInfo)")
+            }
+        }
     }
     
     @available(iOS 2.0, *)
