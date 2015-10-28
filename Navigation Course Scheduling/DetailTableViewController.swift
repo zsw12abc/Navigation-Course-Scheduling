@@ -85,7 +85,20 @@ class DetailTableViewController: ViewController, UITableViewDataSource, UITableV
             let course = detailObjectList[indexPath.row];
             title.text = "\(course["name"])";
             title.textColor = UIColor.redColor();
-            subTitle1.text = "Lecturer: \(course["lecturer"]["name"])";
+            if course["lecturer"] == nil {
+                
+            }else{
+                print("lecutrer point: \(course["lecturer"])")
+                var query = PFQuery(className:"Lecturer")
+                query.getObjectInBackgroundWithId(course["lecturer"].objectId!!) {
+                    (lecturer: PFObject?, error: NSError?) -> Void in
+                    if error == nil && lecturer != nil {
+                        subTitle1.text = "Lecturer: \(lecturer!["name"])";
+                    } else {
+                        print(error)
+                    }
+                }
+            }
             subTitle2.text = "\(course["hours"])hours";
         }else if type == "Lecturer" {
             let lecturer = detailObjectList[indexPath.row];
@@ -119,7 +132,7 @@ class DetailTableViewController: ViewController, UITableViewDataSource, UITableV
             let vc = segue.destinationViewController as! DetailViewController;
             let indexPath = tableView.indexPathForSelectedRow;
             if let index = indexPath {
-               
+               //修改还没写
             }
         } else if segue.identifier == "addSegue" {
             let vc = segue.destinationViewController as! DetailViewController;

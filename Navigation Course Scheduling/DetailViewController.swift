@@ -15,7 +15,7 @@ class DetailViewController: UIViewController, UIPickerViewDelegate, UIPickerView
     var datePicker:UIDatePicker!
     var itemPicker: UIPickerView!
     var itemList: Array<PFObject> = [];
-    var dateList: Array<NSDate>?;
+//    var dateList: Array<NSDate>?;
     var itemName: Array<String> = [];
     
     @IBOutlet weak var dateTextField: UITextField!
@@ -101,7 +101,6 @@ class DetailViewController: UIViewController, UIPickerViewDelegate, UIPickerView
         let dateFormatter = NSDateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm +1000"
         let date = dateFormatter.stringFromDate(datePicker.date)
-        
         if (dateTextField.text == "") {
             dateTextField.text =  date;
         }else{
@@ -112,12 +111,40 @@ class DetailViewController: UIViewController, UIPickerViewDelegate, UIPickerView
     func itemPickerSelected(){
         print(itemTextField.text);
         let item = itemName[itemPicker.selectedRowInComponent(0)];
-        if itemTextField.text == "" {
-            itemTextField.text = item 
-        } else {
-            itemTextField.text = "\(itemTextField.text!); \(item)"
-        }
+//        if itemTextField.text == "" {
+            itemTextField.text = item
+//        } else {
+//            itemTextField.text = "\(itemTextField.text!); \(item)"
+//        }
     }
+    
+    func stringToTime(time: String) -> NSDate{
+        let formatter = NSDateFormatter();
+        formatter.dateFormat = "yyyy-MM-dd HH:mm +1000";
+//        formatter.timeZone = NSTimeZone(name: "UTC");
+        let date = formatter.dateFromString(time)!;
+        
+        return date;
+    }
+    
+    func stringToTimeString(time: String) -> String{
+        let formatter = NSDateFormatter();
+        formatter.dateFormat = "yyyy-MM-dd HH:mm +1000";
+//        formatter.timeZone = NSTimeZone(name: "UTC");
+        let date = formatter.dateFromString(time)!;
+        formatter.dateFormat = "yyyy-MM-dd HH:mm +1000";
+        let dateString = formatter.stringFromDate(date);
+        return dateString;
+    }
+    
+    func timeToString(date: NSDate) -> String{
+        let formatter = NSDateFormatter();
+        formatter.dateFormat = "yyyy-MM-dd HH:mm +1000";
+//        formatter.timeZone = NSTimeZone(name: "UTC");
+        let dateString = formatter.stringFromDate(date);
+        return dateString;
+    }
+
 
     // The number of columns of data
     func numberOfComponentsInPickerView(pickerView: UIPickerView) -> Int {
@@ -152,7 +179,38 @@ class DetailViewController: UIViewController, UIPickerViewDelegate, UIPickerView
         itemTextField.resignFirstResponder();
     }
     @IBAction func saveButtonPressed(sender: UIButton) {
-        
+        print("itemTextField: \(itemTextField.text)");
+        print("dateTextField: \(dateTextField.text)");
+        let course = PFObject(className:type!);
+        course["name"] = nameTextField.text;
+        course["hours"] = Int(hourTextField.text!);
+        if (itemTextField.text != "" && itemTextField.text != nil) {
+            let lecturer = itemList[itemName.indexOf(itemTextField.text!)!];
+            print("lecturer is \(lecturer)");
+            course["lecturer"] = PFObject(withoutDataWithClassName:"Lecturer", objectId:lecturer.objectId);
+        }
+        if (dateTextField.text != "" && dateTextField.text != nil) {
+            let dateString = dateTextField.text;
+            let dateArray = dateString?.componentsSeparatedByString("; ");
+            var dateList = Array<NSDate>();
+            for d in dateArray! {
+                let date = stringToTime(d);
+                dateList.append(date);
+            }
+            print("dateList: \(dateList)");
+            course["schedule"] = dateList;
+        }
+
+        course.saveInBackgroundWithBlock {
+            (success: Bool, error: NSError?) -> Void in
+            if (success) {
+                // The object has been saved.
+                print("added new course: \(course)");
+            } else {
+                // There was a problem, check error.description
+                print(error);
+            }
+        }
         
     }
 }

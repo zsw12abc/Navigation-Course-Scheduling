@@ -34,7 +34,6 @@
 		9EAEA5261BDDB1EB004506D0 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EAEA5251BDDB1EB004506D0 /* libsqlite3.tbd */; };
 		9EAEA5281BDDB20A004506D0 /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EAEA5271BDDB20A004506D0 /* Accounts.framework */; };
 		9EAEA52A1BDDB20E004506D0 /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EAEA5291BDDB20E004506D0 /* Social.framework */; };
-		9EAEA52C1BDDC8F9004506D0 /* Lecturer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EAEA52B1BDDC8F9004506D0 /* Lecturer.swift */; };
 		9EAEA52E1BDDE21E004506D0 /* NCS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EAEA52D1BDDE21E004506D0 /* NCS.swift */; };
 		9EAEA5321BDE01BB004506D0 /* DetailTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EAEA5311BDE01BB004506D0 /* DetailTableViewController.swift */; };
 /* End PBXBuildFile section */
@@ -90,7 +89,6 @@
 		9EAEA5251BDDB1EB004506D0 /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
 		9EAEA5271BDDB20A004506D0 /* Accounts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accounts.framework; path = System/Library/Frameworks/Accounts.framework; sourceTree = SDKROOT; };
 		9EAEA5291BDDB20E004506D0 /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
-		9EAEA52B1BDDC8F9004506D0 /* Lecturer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Lecturer.swift; sourceTree = "<group>"; };
 		9EAEA52D1BDDE21E004506D0 /* NCS.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NCS.swift; sourceTree = "<group>"; };
 		9EAEA5311BDE01BB004506D0 /* DetailTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailTableViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -171,7 +169,6 @@
 				9EAEA4D91BDDAFC2004506D0 /* Main.storyboard */,
 				9EAEA4DE1BDDAFC2004506D0 /* LaunchScreen.storyboard */,
 				9EAEA4E11BDDAFC2004506D0 /* Info.plist */,
-				9EAEA52B1BDDC8F9004506D0 /* Lecturer.swift */,
 				9EAEA52D1BDDE21E004506D0 /* NCS.swift */,
 			);
 			path = "Navigation Course Scheduling";
@@ -357,7 +354,6 @@
 				9EAEA4D81BDDAFC2004506D0 /* ViewController.swift in Sources */,
 				9E5D4FA21BDEFF7F0003E74D /* DetailViewController.swift in Sources */,
 				9EAEA4D61BDDAFC2004506D0 /* AppDelegate.swift in Sources */,
-				9EAEA52C1BDDC8F9004506D0 /* Lecturer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
