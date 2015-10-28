@@ -264,13 +264,14 @@ class DetailViewController: UIViewController, UIPickerViewDelegate, UIPickerView
                             // The object has been saved.
                             print("added new course: \(course)");
                             lecturer!.addUniqueObjectsFromArray([course.objectId!], forKey: "courses")
-                            lecturer!.saveInBackgroundWithBlock{(success: Bool, error: NSError?) -> Void in
-                            if (success) {
-                                    print("added course to lecturer: \(lecturer)");
-                                }else{
-                                    print(error);
-                                }
-                            }
+                            lecturer!.saveEventually();
+//                            lecturer!.saveInBackgroundWithBlock{(success: Bool, error: NSError?) -> Void in
+//                            if (success) {
+//                                    print("added course to lecturer: \(lecturer)");
+//                                }else{
+//                                    print(error);
+//                                }
+//                            }
                         } else {
                             // There was a problem, check error.description
                             print(error);
@@ -290,7 +291,9 @@ class DetailViewController: UIViewController, UIPickerViewDelegate, UIPickerView
                         if (self.itemTextField.text != "" && self.itemTextField.text != nil) {
                             lecturer = self.itemList[self.itemName.indexOf(self.itemTextField.text!)!];
                             print("lecturer is \(lecturer)");
-                            course["lecturer"] = lecturer;
+                            if lecturer!.objectId != self.oldLecturerID {
+                                course["lecturer"] = lecturer;
+                            }
                         }
                         if (self.dateTextField.text != "" && self.dateTextField.text != nil) {
                             let dateString = self.dateTextField.text;
@@ -303,14 +306,16 @@ class DetailViewController: UIViewController, UIPickerViewDelegate, UIPickerView
                             print("dateList: \(dateList)");
                             course["schedule"] = dateList;
                         }
-                        course.saveInBackground();
-                        lecturer!.addUniqueObjectsFromArray([course.objectId!], forKey: "courses");
-                        lecturer!.saveInBackground();
-                        for l in self.itemList {
-                            if l.objectId == self.oldLecturerID {
-                                l.removeObjectsInArray([course.objectId!], forKey: "courses");
-                                l.saveInBackground();
-                                print("\(l["name"]) \(self.itemSelected!["lecturer"].objectId) courseID should be removed: \(course.objectId)");
+                        course.saveEventually();
+                        if lecturer!.objectId != self.oldLecturerID {
+                            lecturer!.addUniqueObjectsFromArray([course.objectId!], forKey: "courses");
+                            lecturer!.saveEventually();
+                            for l in self.itemList {
+                                if l.objectId == self.oldLecturerID {
+                                    l.removeObjectsInArray([course.objectId!], forKey: "courses");
+                                    l.saveEventually();
+                                    print("\(l["name"]) \(self.itemSelected!["lecturer"].objectId) courseID should be removed: \(course.objectId)");
+                                }
                             }
                         }
                     }
