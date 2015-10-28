@@ -15,8 +15,11 @@ class DetailTableViewController: ViewController, UITableViewDataSource, UITableV
     var type :String?;
     var detailIDList: Array<String> = [];
     var detailObjectList: Array<PFObject> = [];
+    
     override func viewDidLoad() {
         super.viewDidLoad();
+        tableView.reloadData();
+        print("detailIDList.count: \(detailIDList.count)");
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -41,9 +44,11 @@ class DetailTableViewController: ViewController, UITableViewDataSource, UITableV
                 // The find succeeded.
                 print("Successfully retrieved \(objects!.count) scores.")
                 // Do something with the found objects
+                self.detailIDList = [];
+                self.detailObjectList = [];
                 if let objects = objects {
                     for object in objects {
-                        print("\(self.type): \(object.objectId)");
+//                        print("\(self.type): \(object.objectId)");
                         self.detailIDList.append(object.objectId!);
                         self.detailObjectList.append(object);
                     }
@@ -86,10 +91,10 @@ class DetailTableViewController: ViewController, UITableViewDataSource, UITableV
             title.text = "\(course["name"])";
             title.textColor = UIColor.redColor();
             if course["lecturer"] == nil {
-                
+                subTitle1.text = "No Lecturer";
             }else{
                 print("lecutrer point: \(course["lecturer"])")
-                var query = PFQuery(className:"Lecturer")
+                let query = PFQuery(className:"Lecturer")
                 query.getObjectInBackgroundWithId(course["lecturer"].objectId!!) {
                     (lecturer: PFObject?, error: NSError?) -> Void in
                     if error == nil && lecturer != nil {

@@ -179,15 +179,17 @@ class DetailViewController: UIViewController, UIPickerViewDelegate, UIPickerView
         itemTextField.resignFirstResponder();
     }
     @IBAction func saveButtonPressed(sender: UIButton) {
+        var lecturer: PFObject?;
         print("itemTextField: \(itemTextField.text)");
         print("dateTextField: \(dateTextField.text)");
         let course = PFObject(className:type!);
         course["name"] = nameTextField.text;
         course["hours"] = Int(hourTextField.text!);
         if (itemTextField.text != "" && itemTextField.text != nil) {
-            let lecturer = itemList[itemName.indexOf(itemTextField.text!)!];
+            lecturer = itemList[itemName.indexOf(itemTextField.text!)!];
             print("lecturer is \(lecturer)");
-            course["lecturer"] = PFObject(withoutDataWithClassName:"Lecturer", objectId:lecturer.objectId);
+//            course["lecturer"] = PFObject(withoutDataWithClassName:"Lecturer", objectId:lecturer.objectId);
+            course["lecturer"] = lecturer;
         }
         if (dateTextField.text != "" && dateTextField.text != nil) {
             let dateString = dateTextField.text;
@@ -206,11 +208,18 @@ class DetailViewController: UIViewController, UIPickerViewDelegate, UIPickerView
             if (success) {
                 // The object has been saved.
                 print("added new course: \(course)");
+                lecturer!.addUniqueObjectsFromArray([course], forKey: "courses")
+                lecturer!.saveInBackgroundWithBlock{(success: Bool, error: NSError?) -> Void in
+                if (success) {
+                        print("added course to lecturer: \(lecturer)");
+                    }else{
+                        print(error);
+                    }
+                }
             } else {
                 // There was a problem, check error.description
                 print(error);
             }
         }
-        
     }
 }
