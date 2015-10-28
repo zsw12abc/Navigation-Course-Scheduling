@@ -208,7 +208,7 @@ class DetailViewController: UIViewController, UIPickerViewDelegate, UIPickerView
             if (success) {
                 // The object has been saved.
                 print("added new course: \(course)");
-                lecturer!.addUniqueObjectsFromArray([course], forKey: "courses")
+                lecturer!.addUniqueObjectsFromArray([course.objectId!], forKey: "courses")
                 lecturer!.saveInBackgroundWithBlock{(success: Bool, error: NSError?) -> Void in
                 if (success) {
                         print("added course to lecturer: \(lecturer)");
