@@ -71,8 +71,8 @@ class DetailViewController: UIViewController, UIPickerViewDelegate, UIPickerView
             }else{
                 self.navigationItem.title = "add new \(type!)";
             }
-        }else{
-            downloadData("Course");
+        }else if (type == "Lecturer"){
+//            downloadData("Course");
             self.secondLabel.text = "Phone:";
             self.thridLabel.text = "Email:";
             self.lastLabel.text = "Schedule:"
@@ -80,11 +80,43 @@ class DetailViewController: UIViewController, UIPickerViewDelegate, UIPickerView
             self.itemTextField.keyboardType = UIKeyboardType.EmailAddress;
             self.datePickerChosen(dateTextField);
             if (itemSelected != nil) {
-                
+                self.navigationItem.title = "Change \(itemSelected!["name"])";
+                self.nameTextField.text = itemSelected!["name"] as? String;
+                self.hourTextField.text = itemSelected!["phone"] as? String;
+                self.itemTextField.text = itemSelected!["email"] as? String;
+                if (itemSelected!["schedule"] != nil){
+                    var dateResult = "";
+                    let dateArray: Array<NSDate> = itemSelected!["schedule"] as! Array<NSDate>;
+                    for d in dateArray {
+                        if dateResult == "" {
+                            dateResult = timeToString(d);
+                        }else{
+                            dateResult = "\(dateResult); \(timeToString(d))";
+                        }
+                    }
+                    self.dateTextField.text = dateResult;
+                }
+            }else{
+                self.navigationItem.title = "add new \(type!)";
+            }
+        }else if (type == "Student"){
+            downloadData("Course");
+            self.secondLabel.text = "Phone:";
+            self.thridLabel.text = "Email:";
+            self.lastLabel.text = "Course:"
+            self.hourTextField.keyboardType = UIKeyboardType.NumberPad;
+            self.itemTextField.keyboardType = UIKeyboardType.EmailAddress;
+            self.itemPickerChosen(dateTextField);
+            if (itemSelected != nil) {
+                self.navigationItem.title = "Change \(itemSelected!["name"])";
+                self.nameTextField.text = itemSelected!["name"] as? String;
+                self.hourTextField.text = itemSelected!["phone"] as? String;
+                self.itemTextField.text = itemSelected!["email"] as? String;
             }else{
                 self.navigationItem.title = "add new \(type!)";
             }
         }
+
         
     }
     
@@ -161,13 +193,25 @@ class DetailViewController: UIViewController, UIPickerViewDelegate, UIPickerView
     }
     
     func itemPickerSelected(){
-        print(itemTextField.text);
+        var textField: UITextField?;
+        if type == "Course" {
+            textField = itemTextField;
+        }else{
+            textField = dateTextField;
+        }
+        print(textField!.text);
         let item = itemName[itemPicker.selectedRowInComponent(0)];
-//        if itemTextField.text == "" {
-            itemTextField.text = item
-//        } else {
-//            itemTextField.text = "\(itemTextField.text!); \(item)"
-//        }
+        if type == "Course" {
+            textField!.text = item;
+        }else{
+            if textField!.text == "" {
+                textField!.text = item;
+            } else {
+                if textField!.text!.rangeOfString(item) == nil{
+                    textField!.text = "\(textField!.text!); \(item)";
+                }
+            }
+        }
     }
     
     func stringToTime(time: String) -> NSDate{
@@ -233,6 +277,7 @@ class DetailViewController: UIViewController, UIPickerViewDelegate, UIPickerView
     
     
     @IBAction func saveButtonPressed(sender: UIButton) {
+        //Course 界面的提交数据
         if (type == "Course") {
             if (itemSelected == nil){
                 if nameTextField.text != "" && hourTextField.text != "" && dateTextField.text != "" && itemTextField.text != "" {
@@ -258,7 +303,7 @@ class DetailViewController: UIViewController, UIPickerViewDelegate, UIPickerView
                         course["schedule"] = dateList;
                     }
 
-                    course.saveInBackgroundWithBlock {
+                    course.saveEventually{
                         (success: Bool, error: NSError?) -> Void in
                         if (success) {
                             // The object has been saved.
@@ -319,6 +364,56 @@ class DetailViewController: UIViewController, UIPickerViewDelegate, UIPickerView
                             }
                         }
                     }
+                }
+            }
+        } else if type == "Lecturer"{
+            if (itemSelected == nil){
+                let lecturer = PFObject(className: type!);
+                lecturer["name"] = nameTextField.text;
+                lecturer["phone"] = hourTextField.text;
+                lecturer["email"] = itemTextField.text;
+                if (dateTextField.text != "" && dateTextField.text != nil) {
+                    let dateString = dateTextField.text;
+                    let dateArray = dateString?.componentsSeparatedByString("; ");
+                    var dateList = Array<NSDate>();
+                    for d in dateArray! {
+                        let date = stringToTime(d);
+                        dateList.append(date);
+                    }
+                    print("dateList: \(dateList)");
+                    lecturer["schedule"] = dateList;
+                }
+                lecturer.saveEventually({ (success, error) -> Void in
+                    if success {
+                        print("added new lecturer: \(lecturer)");
+                    }else{
+                        print(error);
+                    }
+                })
+            }else{
+                if nameTextField.text != "" && hourTextField.text != "" && dateTextField.text != "" && itemTextField.text != "" {
+                    let query = PFQuery(className: type!);
+                    query.getObjectInBackgroundWithId(itemSelected!.objectId!, block: { (lecturer, error) -> Void in
+                        if error != nil {
+                            print(error);
+                        }else if let lecturer = lecturer{
+                            lecturer["name"] = self.nameTextField.text;
+                            lecturer["phone"] = self.hourTextField.text;
+                            lecturer["email"] = self.itemTextField.text;
+                            if (self.dateTextField.text != "" && self.dateTextField.text != nil) {
+                                let dateString = self.dateTextField.text;
+                                let dateArray = dateString?.componentsSeparatedByString("; ");
+                                var dateList = Array<NSDate>();
+                                for d in dateArray! {
+                                    let date = self.stringToTime(d);
+                                    dateList.append(date);
+                                }
+                                print("dateList: \(dateList)");
+                                lecturer["schedule"] = dateList;
+                            }
+                            lecturer.saveEventually();
+                        }
+                    })
                 }
             }
         }

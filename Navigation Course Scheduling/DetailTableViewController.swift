@@ -15,11 +15,17 @@ class DetailTableViewController: ViewController, UITableViewDataSource, UITableV
     var type :String?;
     var detailIDList: Array<String> = [];
     var detailObjectList: Array<PFObject> = [];
+    var refreshControl:UIRefreshControl?
     
     override func viewDidLoad() {
         super.viewDidLoad();
-        tableView.reloadData();
+//        tableView.reloadData();
         print("detailIDList.count: \(detailIDList.count)");
+        self.refreshControl = UIRefreshControl()
+        self.refreshControl?.addTarget(self, action: "onPullToFresh", forControlEvents: UIControlEvents.ValueChanged)
+        self.refreshControl?.attributedTitle=NSAttributedString(string: "松手就可以刷新啦")
+        self.tableView.addSubview(refreshControl!)
+//        self.refreshControl?.hidden = true;
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -28,6 +34,14 @@ class DetailTableViewController: ViewController, UITableViewDataSource, UITableV
         if (type != nil) {
             downloadData(type!);
         }
+    }
+    
+    func onPullToFresh(){
+//        self.refreshControl?.hidden = false;
+        downloadData(type!);
+        tableView.reloadData();
+        self.refreshControl!.endRefreshing();
+//        self.refreshControl?.removeFromSuperview();
     }
     
     override func didReceiveMemoryWarning() {
