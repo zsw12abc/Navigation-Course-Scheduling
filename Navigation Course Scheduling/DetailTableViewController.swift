@@ -69,18 +69,21 @@ class DetailTableViewController: ViewController, UITableViewDataSource, UITableV
     //删除数据
     func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath){
         if editingStyle == UITableViewCellEditingStyle.Delete{
-            let course = detailObjectList[indexPath.row];
-            let query = PFQuery(className:"Lecturer")
-            query.getObjectInBackgroundWithId(course["lecturer"].objectId!!) {
-                (lecturer: PFObject?, error: NSError?) -> Void in
-                if error == nil && lecturer != nil {
-                    lecturer!.removeObjectsInArray([course.objectId!], forKey: "courses");
-                    lecturer!.saveInBackground();
-                } else {
-                    print(error)
+            if type == "Course" {
+                let course = detailObjectList[indexPath.row];
+                let query = PFQuery(className:"Lecturer")
+                query.getObjectInBackgroundWithId(course["lecturer"].objectId!!) {
+                    (lecturer: PFObject?, error: NSError?) -> Void in
+                    if error == nil && lecturer != nil {
+                        lecturer!.removeObjectsInArray([course.objectId!], forKey: "courses");
+                        lecturer!.saveInBackground();
+                    } else {
+                        print(error)
+                    }
                 }
+                course.deleteInBackground();
+                print("\(course["name"]) is deleted");
             }
-            course.deleteInBackground();
             detailObjectList.removeAtIndex(indexPath.row)
             self.tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Automatic)
         }
