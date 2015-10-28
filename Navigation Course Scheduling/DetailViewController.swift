@@ -17,23 +17,75 @@ class DetailViewController: UIViewController, UIPickerViewDelegate, UIPickerView
     var itemList: Array<PFObject> = [];
 //    var dateList: Array<NSDate>?;
     var itemName: Array<String> = [];
+    var itemSelected : PFObject?;
+    var oldLecturerID: String?;
     
     @IBOutlet weak var dateTextField: UITextField!
     @IBOutlet weak var itemTextField: UITextField!
     @IBOutlet weak var nameTextField: UITextField!
     @IBOutlet weak var hourTextField: UITextField!
     
+    @IBOutlet weak var nameLabel: UILabel!
+    @IBOutlet weak var secondLabel: UILabel!
+    @IBOutlet weak var thridLabel: UILabel!
+    @IBOutlet weak var lastLabel: UILabel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        self.navigationItem.title = "add new \(type!)";
-        print("type: \(type)");
+//        print("type: \(type)");
         if (type! == "Course") {
             downloadData("Lecturer");
+            self.datePickerChosen(dateTextField);
+            self.itemPickerChosen(itemTextField);
+            self.hourTextField.keyboardType = UIKeyboardType.NumberPad;
+            if (itemSelected != nil) {
+                self.navigationItem.title = "Change \(itemSelected!["name"])";
+                self.nameTextField.text = (itemSelected!["name"] as! String);
+                self.hourTextField.text = "\(itemSelected!["hours"])";
+                if itemSelected!["lecturer"] != nil {
+                    self.oldLecturerID = itemSelected!["lecturer"].objectId;
+                    self.itemTextField.text = "id: \(itemSelected!["lecturer"].objectId)";
+                    let query = PFQuery(className: "Lecturer");
+                    query.getObjectInBackgroundWithId(itemSelected!["lecturer"].objectId!!) {
+                        (lecturer: PFObject?, error: NSError?) -> Void in
+                        if error == nil && lecturer != nil {
+                            self.itemTextField.text = (lecturer!["name"] as! String);
+                        } else {
+                            print(error)
+                        }
+                    }
+                }
+                if (itemSelected!["schedule"] != nil){
+                    var dateResult = "";
+                    let dateArray: Array<NSDate> = itemSelected!["schedule"] as! Array<NSDate>;
+                    for d in dateArray {
+                        if dateResult == "" {
+                            dateResult = timeToString(d);
+                        }else{
+                            dateResult = "\(dateResult); \(timeToString(d))";
+                        }
+                    }
+                    self.dateTextField.text = dateResult;
+                }
+            }else{
+                self.navigationItem.title = "add new \(type!)";
+            }
         }else{
             downloadData("Course");
+            self.secondLabel.text = "Phone:";
+            self.thridLabel.text = "Email:";
+            self.lastLabel.text = "Schedule:"
+            self.hourTextField.keyboardType = UIKeyboardType.NumberPad;
+            self.itemTextField.keyboardType = UIKeyboardType.EmailAddress;
+            self.datePickerChosen(dateTextField);
+            if (itemSelected != nil) {
+                
+            }else{
+                self.navigationItem.title = "add new \(type!)";
+            }
         }
+        
     }
     
     override func didReceiveMemoryWarning() {
@@ -55,9 +107,9 @@ class DetailViewController: UIViewController, UIPickerViewDelegate, UIPickerView
                         self.itemName.append(object["name"] as! String);
                         self.itemList.append(object);
                     }
-                    self.datePickerChosen();
-                    self.itemPickerChosen();
-                   self.itemPicker.reloadAllComponents();
+                    if (self.type == "Course") {
+                        self.itemPicker.reloadAllComponents();
+                    }
                 }
             } else {
                 // Log details of the failure
@@ -67,33 +119,33 @@ class DetailViewController: UIViewController, UIPickerViewDelegate, UIPickerView
     }
 
     
-    func datePickerChosen() {
+    func datePickerChosen(textField: UITextField) {
         let customView:UIView = UIView (frame: CGRectMake(0, 100, self.view.frame.size.width, 160))
         customView.backgroundColor = UIColor.whiteColor()
         datePicker = UIDatePicker(frame: CGRectMake(0, 0, self.view.frame.size.width, 160))
         datePicker.locale = NSLocale(localeIdentifier: "zh_CN")
         customView .addSubview(datePicker)
-        dateTextField.inputView = customView
+        textField.inputView = customView
         let doneButton:UIButton = UIButton (frame: CGRectMake(100, 100, self.view.frame.size.width, 44))
         doneButton.setTitle("选择", forState: UIControlState.Normal)
         doneButton.addTarget(self, action: "datePickerSelected", forControlEvents: UIControlEvents.TouchUpInside)
         doneButton.backgroundColor = UIColor .blueColor()
-        dateTextField.inputAccessoryView = doneButton
+        textField.inputAccessoryView = doneButton
     }
     
-    func itemPickerChosen(){
+    func itemPickerChosen(textField: UITextField){
         let customView:UIView = UIView (frame: CGRectMake(0, 100, self.view.frame.size.width, 160))
         customView.backgroundColor = UIColor.whiteColor()
         itemPicker = UIPickerView(frame: CGRectMake(0, 0, self.view.frame.size.width, 160));
         itemPicker.delegate = self;
         itemPicker.dataSource = self;
         customView .addSubview(itemPicker)
-        itemTextField.inputView = customView
+        textField.inputView = customView
         let doneButton:UIButton = UIButton (frame: CGRectMake(100, 100, self.view.frame.size.width, 44))
         doneButton.setTitle("选择", forState: UIControlState.Normal)
         doneButton.addTarget(self, action: "itemPickerSelected", forControlEvents: UIControlEvents.TouchUpInside)
         doneButton.backgroundColor = UIColor .blueColor()
-        itemTextField.inputAccessoryView = doneButton
+        textField.inputAccessoryView = doneButton
     }
     
     func datePickerSelected() {
@@ -178,47 +230,91 @@ class DetailViewController: UIViewController, UIPickerViewDelegate, UIPickerView
         hourTextField.resignFirstResponder();
         itemTextField.resignFirstResponder();
     }
+    
+    
     @IBAction func saveButtonPressed(sender: UIButton) {
-        var lecturer: PFObject?;
-        print("itemTextField: \(itemTextField.text)");
-        print("dateTextField: \(dateTextField.text)");
-        let course = PFObject(className:type!);
-        course["name"] = nameTextField.text;
-        course["hours"] = Int(hourTextField.text!);
-        if (itemTextField.text != "" && itemTextField.text != nil) {
-            lecturer = itemList[itemName.indexOf(itemTextField.text!)!];
-            print("lecturer is \(lecturer)");
-//            course["lecturer"] = PFObject(withoutDataWithClassName:"Lecturer", objectId:lecturer.objectId);
-            course["lecturer"] = lecturer;
-        }
-        if (dateTextField.text != "" && dateTextField.text != nil) {
-            let dateString = dateTextField.text;
-            let dateArray = dateString?.componentsSeparatedByString("; ");
-            var dateList = Array<NSDate>();
-            for d in dateArray! {
-                let date = stringToTime(d);
-                dateList.append(date);
-            }
-            print("dateList: \(dateList)");
-            course["schedule"] = dateList;
-        }
+        if (type == "Course") {
+            if (itemSelected == nil){
+                if nameTextField.text != "" && hourTextField.text != "" && dateTextField.text != "" && itemTextField.text != "" {
+                    var lecturer: PFObject?;
+                    let course = PFObject(className:type!);
+                    course["name"] = nameTextField.text;
+                    course["hours"] = Int(hourTextField.text!);
+                    if (itemTextField.text != "" && itemTextField.text != nil) {
+                        lecturer = itemList[itemName.indexOf(itemTextField.text!)!];
+                        print("lecturer is \(lecturer)");
+            //            course["lecturer"] = PFObject(withoutDataWithClassName:"Lecturer", objectId:lecturer.objectId);
+                        course["lecturer"] = lecturer;
+                    }
+                    if (dateTextField.text != "" && dateTextField.text != nil) {
+                        let dateString = dateTextField.text;
+                        let dateArray = dateString?.componentsSeparatedByString("; ");
+                        var dateList = Array<NSDate>();
+                        for d in dateArray! {
+                            let date = stringToTime(d);
+                            dateList.append(date);
+                        }
+                        print("dateList: \(dateList)");
+                        course["schedule"] = dateList;
+                    }
 
-        course.saveInBackgroundWithBlock {
-            (success: Bool, error: NSError?) -> Void in
-            if (success) {
-                // The object has been saved.
-                print("added new course: \(course)");
-                lecturer!.addUniqueObjectsFromArray([course.objectId!], forKey: "courses")
-                lecturer!.saveInBackgroundWithBlock{(success: Bool, error: NSError?) -> Void in
-                if (success) {
-                        print("added course to lecturer: \(lecturer)");
-                    }else{
-                        print(error);
+                    course.saveInBackgroundWithBlock {
+                        (success: Bool, error: NSError?) -> Void in
+                        if (success) {
+                            // The object has been saved.
+                            print("added new course: \(course)");
+                            lecturer!.addUniqueObjectsFromArray([course.objectId!], forKey: "courses")
+                            lecturer!.saveInBackgroundWithBlock{(success: Bool, error: NSError?) -> Void in
+                            if (success) {
+                                    print("added course to lecturer: \(lecturer)");
+                                }else{
+                                    print(error);
+                                }
+                            }
+                        } else {
+                            // There was a problem, check error.description
+                            print(error);
+                        }
                     }
                 }
-            } else {
-                // There was a problem, check error.description
-                print(error);
+            }else{
+                let query = PFQuery(className:type!);
+                query.getObjectInBackgroundWithId((itemSelected?.objectId)!) {
+                    (course: PFObject?, error: NSError?) -> Void in
+                    if error != nil {
+                        print(error)
+                    } else if let course = course {
+                        var lecturer: PFObject?;
+                        course["name"] = self.nameTextField.text;
+                        course["hours"] = Int(self.hourTextField.text!);
+                        if (self.itemTextField.text != "" && self.itemTextField.text != nil) {
+                            lecturer = self.itemList[self.itemName.indexOf(self.itemTextField.text!)!];
+                            print("lecturer is \(lecturer)");
+                            course["lecturer"] = lecturer;
+                        }
+                        if (self.dateTextField.text != "" && self.dateTextField.text != nil) {
+                            let dateString = self.dateTextField.text;
+                            let dateArray = dateString?.componentsSeparatedByString("; ");
+                            var dateList = Array<NSDate>();
+                            for d in dateArray! {
+                                let date = self.stringToTime(d);
+                                dateList.append(date);
+                            }
+                            print("dateList: \(dateList)");
+                            course["schedule"] = dateList;
+                        }
+                        course.saveInBackground();
+                        lecturer!.addUniqueObjectsFromArray([course.objectId!], forKey: "courses");
+                        lecturer!.saveInBackground();
+                        for l in self.itemList {
+                            if l.objectId == self.oldLecturerID {
+                                l.removeObjectsInArray([course.objectId!], forKey: "courses");
+                                l.saveInBackground();
+                                print("\(l["name"]) \(self.itemSelected!["lecturer"].objectId) courseID should be removed: \(course.objectId)");
+                            }
+                        }
+                    }
+                }
             }
         }
     }

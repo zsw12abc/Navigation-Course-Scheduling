@@ -132,12 +132,18 @@ class DetailTableViewController: ViewController, UITableViewDataSource, UITableV
         performSegueWithIdentifier("addSegue", sender: sender);
     }
     
+    @IBAction func close(segue: UIStoryboardSegue){
+        print("closed");
+        tableView.reloadData();
+    }
+    
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if segue.identifier == "changeSegue" {
             let vc = segue.destinationViewController as! DetailViewController;
             let indexPath = tableView.indexPathForSelectedRow;
-            if let index = indexPath {
-               //修改还没写
+            vc.type = type;
+            if let index = indexPath?.row {
+                vc.itemSelected = detailObjectList[index];
             }
         } else if segue.identifier == "addSegue" {
             let vc = segue.destinationViewController as! DetailViewController;
