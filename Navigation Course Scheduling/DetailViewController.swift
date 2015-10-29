@@ -19,6 +19,7 @@ class DetailViewController: UIViewController, UIPickerViewDelegate, UIPickerView
     var itemName: Array<String> = [];
     var itemSelected : PFObject?;
     var oldLecturerID: String?;
+    var oldCourseID: Array<String>?;
     var itemIDList: Array<String> = [];
     
     @IBOutlet weak var dateTextField: UITextField!
@@ -106,6 +107,7 @@ class DetailViewController: UIViewController, UIPickerViewDelegate, UIPickerView
             self.lastLabel.text = "Course:"
             self.hourTextField.keyboardType = UIKeyboardType.NumberPad;
             self.itemTextField.keyboardType = UIKeyboardType.EmailAddress;
+            self.oldCourseID = itemSelected!["courses"] as? Array<String>;
             self.itemPickerChosen(dateTextField);
             if (itemSelected != nil) {
                 self.navigationItem.title = "Change \(itemSelected!["name"])";
@@ -483,9 +485,54 @@ class DetailViewController: UIViewController, UIPickerViewDelegate, UIPickerView
                         print(error);
                     }
                 })
+            }else{
+                print("修改已存在的student的数据");
+                let query = PFQuery(className: type!);
+                query.getObjectInBackgroundWithId((itemSelected!.objectId)!, block: { (student, error) -> Void in
+                    if error != nil {
+                        print(error);
+                    }else{
+                        print("find student \(student!["name"]) with \(student!.objectId)");
+                        student!["name"] = self.nameTextField.text;
+                        student!["phone"] = self.hourTextField.text;
+                        student!["email"] = self.itemTextField.text;
+                        if (self.dateTextField.text != "" && self.dateTextField.text != nil) {
+                            print("修改过Student的课程 \(student?.objectId)");
+                            student!["courses"] = [];
+                            let courseString = self.dateTextField.text;
+                            let courseArray = courseString!.componentsSeparatedByString("; ");
+                            for courseName in courseArray {
+                                let course = self.itemList[self.itemName.indexOf(courseName)!]
+                                student!.addUniqueObjectsFromArray([course.objectId!], forKey: "courses");
+                                course.addUniqueObjectsFromArray([student!.objectId!], forKey: "students");
+                                course.saveInBackground();
+                                print("added new course:\(course["name"]) to \(student!["name"]) with \(student!.objectId)");
+                            }
+                            student!.saveEventually();
+                            print("old course id array: \(self.itemSelected!["courses"])");
+                            if self.oldCourseID != nil {
+                                for courseID in self.oldCourseID! {
+                                    if ((courseArray.contains(courseID)) == false){
+                                        let course = self.itemList[self.itemIDList.indexOf(courseID)!];
+                                        course.removeObjectsInArray([student!.objectId!], forKey: "students");
+                                        course.saveInBackground();
+                                    }
+                                }
+                            }
+                        }else{
+                            print("删除student所有课程");
+                            student!["courses"] = [];
+                            if self.oldCourseID != nil {
+                                for courseID in self.oldCourseID! {
+                                    let course = self.itemList[self.itemIDList.indexOf(courseID)!];
+                                    course.removeObjectsInArray([student!.objectId!], forKey: "students");
+                                    course.saveInBackground();
+                                }
+                            }
+                        }
+                    }
+                })
             }
-        }else{
-                
         }
     }
 }
