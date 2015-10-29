@@ -37,6 +37,12 @@ class DetailViewController: UIViewController, UIPickerViewDelegate, UIPickerView
         // Do any additional setup after loading the view, typically from a nib.
         if (type! == "Course") {
             downloadData("Lecturer");
+            self.nameLabel.text = "*Name:"
+            self.secondLabel.text = "*Hours:"
+            self.thridLabel.text = "Lecturer:"
+            self.lastLabel.text = "Schedule:"
+            self.nameLabel.textColor = UIColor.redColor();
+            self.secondLabel.textColor = UIColor.redColor();
             self.datePickerChosen(dateTextField);
             self.itemPickerChosen(itemTextField);
             self.hourTextField.keyboardType = UIKeyboardType.NumberPad;
@@ -74,9 +80,12 @@ class DetailViewController: UIViewController, UIPickerViewDelegate, UIPickerView
             }
         }else if (type == "Lecturer"){
 //            downloadData("Course");
-            self.secondLabel.text = "Phone:";
+            self.nameLabel.text = "*Name:"
+            self.secondLabel.text = "*Phone:";
             self.thridLabel.text = "Email:";
             self.lastLabel.text = "Schedule:"
+            self.nameLabel.textColor = UIColor.redColor();
+            self.secondLabel.textColor = UIColor.redColor();
             self.hourTextField.keyboardType = UIKeyboardType.NumberPad;
             self.itemTextField.keyboardType = UIKeyboardType.EmailAddress;
             self.datePickerChosen(dateTextField);
@@ -102,12 +111,14 @@ class DetailViewController: UIViewController, UIPickerViewDelegate, UIPickerView
             }
         }else if (type == "Student"){
             downloadData("Course");
-            self.secondLabel.text = "Phone:";
+            self.nameLabel.text = "*Name:"
+            self.secondLabel.text = "*Phone:";
             self.thridLabel.text = "Email:";
             self.lastLabel.text = "Course:"
+            self.nameLabel.textColor = UIColor.redColor();
+            self.secondLabel.textColor = UIColor.redColor();
             self.hourTextField.keyboardType = UIKeyboardType.NumberPad;
             self.itemTextField.keyboardType = UIKeyboardType.EmailAddress;
-            self.oldCourseID = itemSelected!["courses"] as? Array<String>;
             self.itemPickerChosen(dateTextField);
             if (itemSelected != nil) {
                 self.navigationItem.title = "Change \(itemSelected!["name"])";
@@ -116,6 +127,7 @@ class DetailViewController: UIViewController, UIPickerViewDelegate, UIPickerView
                 self.itemTextField.text = itemSelected!["email"] as? String;
                 //读取Student的选课, 输出选课的Array
                 if itemSelected!["courses"] != nil {
+                    self.oldCourseID = itemSelected!["courses"] as? Array<String>;
                     let query = PFQuery(className: "Course");
                     let courseArray = itemSelected!["courses"] as! Array<String>;
                     var courseString = "";
@@ -310,7 +322,7 @@ class DetailViewController: UIViewController, UIPickerViewDelegate, UIPickerView
         //Course 界面的提交数据
         if (type == "Course") {
             if (itemSelected == nil){
-                if nameTextField.text != "" && hourTextField.text != ""  && itemTextField.text != "" {
+                if nameTextField.text != "" && hourTextField.text != ""{
                     var lecturer: PFObject?;
                     let course = PFObject(className:type!);
                     course["name"] = nameTextField.text;
@@ -318,8 +330,9 @@ class DetailViewController: UIViewController, UIPickerViewDelegate, UIPickerView
                     if (itemTextField.text != "" && itemTextField.text != nil) {
                         lecturer = itemList[itemName.indexOf(itemTextField.text!)!];
                         print("lecturer is \(lecturer)");
-            //            course["lecturer"] = PFObject(withoutDataWithClassName:"Lecturer", objectId:lecturer.objectId);
                         course["lecturer"] = lecturer;
+                        lecturer!.addUniqueObjectsFromArray([course.objectId!], forKey: "courses")
+                        lecturer!.saveInBackground();
                     }
                     if (dateTextField.text != "" && dateTextField.text != nil) {
                         let dateString = dateTextField.text;
@@ -333,25 +346,8 @@ class DetailViewController: UIViewController, UIPickerViewDelegate, UIPickerView
                         course["schedule"] = dateList;
                     }
 
-                    course.saveEventually{
-                        (success: Bool, error: NSError?) -> Void in
-                        if (success) {
-                            // The object has been saved.
-                            print("added new course: \(course)");
-                            lecturer!.addUniqueObjectsFromArray([course.objectId!], forKey: "courses")
-                            lecturer!.saveEventually();
-//                            lecturer!.saveInBackgroundWithBlock{(success: Bool, error: NSError?) -> Void in
-//                            if (success) {
-//                                    print("added course to lecturer: \(lecturer)");
-//                                }else{
-//                                    print(error);
-//                                }
-//                            }
-                        } else {
-                            // There was a problem, check error.description
-                            print(error);
-                        }
-                    }
+                    course.saveEventually();
+                    print("added new course: \(course)");
                 }
             }else{
                 let query = PFQuery(className:type!);
@@ -421,7 +417,7 @@ class DetailViewController: UIViewController, UIPickerViewDelegate, UIPickerView
                     }
                 })
             }else{
-                if nameTextField.text != "" && hourTextField.text != "" && itemTextField.text != "" {
+                if nameTextField.text != "" && hourTextField.text != ""{
                     let query = PFQuery(className: type!);
                     query.getObjectInBackgroundWithId(itemSelected!.objectId!, block: { (lecturer, error) -> Void in
                         if error != nil {
@@ -464,23 +460,24 @@ class DetailViewController: UIViewController, UIPickerViewDelegate, UIPickerView
                 student.saveEventually({ (success, error) -> Void in
                     if success{
                         print("added new student: \(student)");
-                        let courseString = self.dateTextField.text;
-                        let courseArray = courseString?.componentsSeparatedByString("; ");
-                        for courseName in courseArray! {
-                            let course = self.itemList[self.itemName.indexOf(courseName)!]
-                            print("added new student:\(student["name"]) with \(student.objectId) to \(course["name"]) ");
-                            let query = PFQuery(className:"Course")
-                            query.getObjectInBackgroundWithId(course.objectId!) {
-                                (course: PFObject?, error: NSError?) -> Void in
-                                if error == nil && course != nil {
-                                    course!.addUniqueObject([student.objectId!], forKey: "students");
-                                    course!.saveEventually();
-                                } else {
-                                    print(error)
+                        if (self.dateTextField.text != "" && self.dateTextField.text != nil) {
+                            let courseString = self.dateTextField.text;
+                            let courseArray = courseString?.componentsSeparatedByString("; ");
+                            for courseName in courseArray! {
+                                let course = self.itemList[self.itemName.indexOf(courseName)!]
+                                print("added new student:\(student["name"]) with \(student.objectId) to \(course["name"]) ");
+                                let query = PFQuery(className:"Course")
+                                query.getObjectInBackgroundWithId(course.objectId!) {
+                                    (course: PFObject?, error: NSError?) -> Void in
+                                    if error == nil && course != nil {
+                                        course!.addUniqueObject([student.objectId!], forKey: "students");
+                                        course!.saveEventually();
+                                    } else {
+                                        print(error)
+                                    }
                                 }
                             }
                         }
-
                     }else{
                         print(error);
                     }
