@@ -96,6 +96,10 @@ class DetailTableViewController: ViewController, UITableViewDataSource, UITableV
                 }
                 course.deleteInBackground();
                 print("\(course["name"]) is deleted");
+            }else if type == "Lecturer" {
+                
+            }else if type == "Student" {
+                
             }
             detailObjectList.removeAtIndex(indexPath.row)
             self.tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Automatic)

@@ -19,6 +19,7 @@ class DetailViewController: UIViewController, UIPickerViewDelegate, UIPickerView
     var itemName: Array<String> = [];
     var itemSelected : PFObject?;
     var oldLecturerID: String?;
+    var itemIDList: Array<String> = [];
     
     @IBOutlet weak var dateTextField: UITextField!
     @IBOutlet weak var itemTextField: UITextField!
@@ -33,7 +34,6 @@ class DetailViewController: UIViewController, UIPickerViewDelegate, UIPickerView
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-//        print("type: \(type)");
         if (type! == "Course") {
             downloadData("Lecturer");
             self.datePickerChosen(dateTextField);
@@ -112,6 +112,33 @@ class DetailViewController: UIViewController, UIPickerViewDelegate, UIPickerView
                 self.nameTextField.text = itemSelected!["name"] as? String;
                 self.hourTextField.text = itemSelected!["phone"] as? String;
                 self.itemTextField.text = itemSelected!["email"] as? String;
+                //读取Student的选课, 输出选课的Array
+                if itemSelected!["courses"] != nil {
+                    let query = PFQuery(className: "Course");
+                    let courseArray = itemSelected!["courses"] as! Array<String>;
+                    var courseString = "";
+                    print("courseArray \(courseArray)");
+                    query.findObjectsInBackgroundWithBlock({ (courses, error) -> Void in
+                        if error == nil {
+                            if let courses = courses {
+                                for course in courses{
+                                    for courseID in courseArray {
+                                        if course.objectId == courseID {
+                                            if courseString == "" {
+                                                courseString = course["name"] as! String;
+                                            }else{
+                                                courseString = "\(courseString); \(course["name"])"
+                                            }
+                                        }
+                                    }
+                                }
+                                self.dateTextField.text = courseString;
+                            }
+                        }else{
+                            print(error);
+                        }
+                    })
+                }
             }else{
                 self.navigationItem.title = "add new \(type!)";
             }
@@ -137,15 +164,16 @@ class DetailViewController: UIViewController, UIPickerViewDelegate, UIPickerView
                     for object in objects {
                         print("\(type): \(object.objectId)");
                         self.itemName.append(object["name"] as! String);
+                        self.itemIDList.append(object.objectId!);
                         self.itemList.append(object);
                     }
-                    if (self.type == "Course") {
+                    //if (self.type == "Course") {
                         self.itemPicker.reloadAllComponents();
-                    }
+                    //}
                 }
             } else {
                 // Log details of the failure
-                print("Error: \(error!) \(error!.userInfo)")
+                print("Error: \(error!)")
             }
         }
     }
@@ -416,6 +444,49 @@ class DetailViewController: UIViewController, UIPickerViewDelegate, UIPickerView
                     })
                 }
             }
+        } else if type == "Student" {
+            if (itemSelected == nil){
+                let student = PFObject(className: type!);
+                student["name"] = nameTextField.text;
+                student["phone"] = hourTextField.text;
+                student["email"] = itemTextField.text;
+                if (dateTextField.text != "" && dateTextField.text != nil) {
+                    let courseString = dateTextField.text;
+                    let courseArray = courseString?.componentsSeparatedByString("; ");
+                    for courseName in courseArray! {
+                        let course = itemList[itemName.indexOf(courseName)!]
+                        student.addUniqueObjectsFromArray([course.objectId!], forKey: "courses");
+                        print("added new course:\(course["name"]) to \(student["name"]) with \(student.objectId)");
+                    }
+                }
+                student.saveEventually({ (success, error) -> Void in
+                    if success{
+                        print("added new student: \(student)");
+                        let courseString = self.dateTextField.text;
+                        let courseArray = courseString?.componentsSeparatedByString("; ");
+                        for courseName in courseArray! {
+                            let course = self.itemList[self.itemName.indexOf(courseName)!]
+                            print("added new student:\(student["name"]) with \(student.objectId) to \(course["name"]) ");
+                            let query = PFQuery(className:"Course")
+                            query.getObjectInBackgroundWithId(course.objectId!) {
+                                (course: PFObject?, error: NSError?) -> Void in
+                                if error == nil && course != nil {
+                                    course!.addUniqueObject([student.objectId!], forKey: "students");
+                                    course!.saveEventually();
+                                } else {
+                                    print(error)
+                                }
+                            }
+                        }
+
+                    }else{
+                        print(error);
+                    }
+                })
+            }
+        }else{
+                
         }
     }
 }
+
