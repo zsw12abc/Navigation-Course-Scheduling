@@ -84,8 +84,8 @@ class DetailTableViewController: ViewController, UITableViewDataSource, UITableV
         if editingStyle == UITableViewCellEditingStyle.Delete{
             if type == "Course" {
                 let course = detailObjectList[indexPath.row];
-                let query = PFQuery(className:"Lecturer")
-                query.getObjectInBackgroundWithId(course["lecturer"].objectId!!) {
+                let lecturerQuery = PFQuery(className:"Lecturer")
+                lecturerQuery.getObjectInBackgroundWithId(course["lecturer"].objectId!!) {
                     (lecturer: PFObject?, error: NSError?) -> Void in
                     if error == nil && lecturer != nil {
                         lecturer!.removeObjectsInArray([course.objectId!], forKey: "courses");
@@ -94,12 +94,52 @@ class DetailTableViewController: ViewController, UITableViewDataSource, UITableV
                         print(error)
                     }
                 }
+                let studentQuery = PFQuery(className: "Student");
+                studentQuery.findObjectsInBackgroundWithBlock({ (students, error) -> Void in
+                    if error == nil {
+                        for student in students! {
+                            student.removeObjectsInArray([course.objectId!], forKey: "courses");
+                            student.saveInBackground();
+                        }
+                    }else{
+                        print(error);
+                    }
+                })
                 course.deleteInBackground();
                 print("\(course["name"]) is deleted");
             }else if type == "Lecturer" {
-                
+                let lecturer = detailObjectList[indexPath.row];
+                let query = PFQuery(className: "Course");
+                query.findObjectsInBackgroundWithBlock({ (courses, error) -> Void in
+                    if error == nil {
+                        for course in courses! {
+                            if (course["lecturer"] != nil) {
+                                if course["lecturer"].objectId == lecturer.objectId {
+                                    print("delete lecturer \(course["lecturer"].objectId) from course \(course["name"])");
+                                    course.removeObjectForKey("lecturer")
+                                    course.saveInBackground();
+                                }
+                            }
+                        }
+                    }else{
+                        print(error);
+                    }
+                })
+//                lecturer.deleteInBackground();
             }else if type == "Student" {
-                
+                let student = detailObjectList[indexPath.row];
+                let query = PFQuery(className: "Course");
+                query.findObjectsInBackgroundWithBlock({ (courses, error) -> Void in
+                    if error != nil {
+                        print(error);
+                    }else{
+                        for course in courses! {
+                            course.removeObjectsInArray([student.objectId!], forKey: "students")
+                            course.saveInBackground();
+                        }
+                    }
+                })
+                student.deleteInBackground();
             }
             detailObjectList.removeAtIndex(indexPath.row)
             self.tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Automatic)
