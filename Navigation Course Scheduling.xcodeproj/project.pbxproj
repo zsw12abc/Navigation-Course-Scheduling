@@ -35,7 +35,6 @@
 		9EAEA5281BDDB20A004506D0 /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EAEA5271BDDB20A004506D0 /* Accounts.framework */; };
 		9EAEA52A1BDDB20E004506D0 /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EAEA5291BDDB20E004506D0 /* Social.framework */; };
 		9EAEA5321BDE01BB004506D0 /* DetailTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EAEA5311BDE01BB004506D0 /* DetailTableViewController.swift */; };
-		9ED22BFB1BE1E89D0086CF3C /* ScheduleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ED22BFA1BE1E89D0086CF3C /* ScheduleViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -90,7 +89,6 @@
 		9EAEA5271BDDB20A004506D0 /* Accounts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accounts.framework; path = System/Library/Frameworks/Accounts.framework; sourceTree = SDKROOT; };
 		9EAEA5291BDDB20E004506D0 /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
 		9EAEA5311BDE01BB004506D0 /* DetailTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailTableViewController.swift; sourceTree = "<group>"; };
-		9ED22BFA1BE1E89D0086CF3C /* ScheduleViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScheduleViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -166,7 +164,6 @@
 				9EAEA4D71BDDAFC2004506D0 /* ViewController.swift */,
 				9EAEA5311BDE01BB004506D0 /* DetailTableViewController.swift */,
 				9E5D4FA11BDEFF7F0003E74D /* DetailViewController.swift */,
-				9ED22BFA1BE1E89D0086CF3C /* ScheduleViewController.swift */,
 				9EAEA4D91BDDAFC2004506D0 /* Main.storyboard */,
 				9EAEA4DE1BDDAFC2004506D0 /* LaunchScreen.storyboard */,
 				9EAEA4E11BDDAFC2004506D0 /* Info.plist */,
@@ -349,7 +346,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9ED22BFB1BE1E89D0086CF3C /* ScheduleViewController.swift in Sources */,
 				9EAEA5321BDE01BB004506D0 /* DetailTableViewController.swift in Sources */,
 				9EAEA4D81BDDAFC2004506D0 /* ViewController.swift in Sources */,
 				9E5D4FA21BDEFF7F0003E74D /* DetailViewController.swift in Sources */,
