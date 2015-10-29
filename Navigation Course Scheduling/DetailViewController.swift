@@ -280,7 +280,7 @@ class DetailViewController: UIViewController, UIPickerViewDelegate, UIPickerView
         //Course 界面的提交数据
         if (type == "Course") {
             if (itemSelected == nil){
-                if nameTextField.text != "" && hourTextField.text != "" && dateTextField.text != "" && itemTextField.text != "" {
+                if nameTextField.text != "" && hourTextField.text != ""  && itemTextField.text != "" {
                     var lecturer: PFObject?;
                     let course = PFObject(className:type!);
                     course["name"] = nameTextField.text;
@@ -391,7 +391,7 @@ class DetailViewController: UIViewController, UIPickerViewDelegate, UIPickerView
                     }
                 })
             }else{
-                if nameTextField.text != "" && hourTextField.text != "" && dateTextField.text != "" && itemTextField.text != "" {
+                if nameTextField.text != "" && hourTextField.text != "" && itemTextField.text != "" {
                     let query = PFQuery(className: type!);
                     query.getObjectInBackgroundWithId(itemSelected!.objectId!, block: { (lecturer, error) -> Void in
                         if error != nil {

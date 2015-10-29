@@ -37,11 +37,10 @@ class DetailTableViewController: ViewController, UITableViewDataSource, UITableV
     }
     
     func onPullToFresh(){
-//        self.refreshControl?.hidden = false;
-        downloadData(type!);
-        tableView.reloadData();
-        self.refreshControl!.endRefreshing();
-//        self.refreshControl?.removeFromSuperview();
+        dispatch_async(dispatch_get_main_queue(), {
+            self.downloadData(self.type!);
+            self.refreshControl?.endRefreshing();
+        })
     }
     
     override func didReceiveMemoryWarning() {
