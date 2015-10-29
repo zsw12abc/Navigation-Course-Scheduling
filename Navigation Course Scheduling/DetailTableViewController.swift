@@ -84,16 +84,19 @@ class DetailTableViewController: ViewController, UITableViewDataSource, UITableV
         if editingStyle == UITableViewCellEditingStyle.Delete{
             if type == "Course" {
                 let course = detailObjectList[indexPath.row];
+                if course["lecturer"] != nil {
                 let lecturerQuery = PFQuery(className:"Lecturer")
-                lecturerQuery.getObjectInBackgroundWithId(course["lecturer"].objectId!!) {
-                    (lecturer: PFObject?, error: NSError?) -> Void in
-                    if error == nil && lecturer != nil {
-                        lecturer!.removeObjectsInArray([course.objectId!], forKey: "courses");
-                        lecturer!.saveInBackground();
-                    } else {
-                        print(error)
+                    lecturerQuery.getObjectInBackgroundWithId(course["lecturer"].objectId!!) {
+                        (lecturer: PFObject?, error: NSError?) -> Void in
+                        if error == nil && lecturer != nil {
+                            lecturer!.removeObjectsInArray([course.objectId!], forKey: "courses");
+                            lecturer!.saveInBackground();
+                        } else {
+                            print(error)
+                        }
                     }
                 }
+//                if course["student"]
                 let studentQuery = PFQuery(className: "Student");
                 studentQuery.findObjectsInBackgroundWithBlock({ (students, error) -> Void in
                     if error == nil {
@@ -125,7 +128,7 @@ class DetailTableViewController: ViewController, UITableViewDataSource, UITableV
                         print(error);
                     }
                 })
-//                lecturer.deleteInBackground();
+                lecturer.deleteInBackground();
             }else if type == "Student" {
                 let student = detailObjectList[indexPath.row];
                 let query = PFQuery(className: "Course");
