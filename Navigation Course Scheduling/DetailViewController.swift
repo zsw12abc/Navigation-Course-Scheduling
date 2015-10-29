@@ -331,8 +331,7 @@ class DetailViewController: UIViewController, UIPickerViewDelegate, UIPickerView
                         lecturer = itemList[itemName.indexOf(itemTextField.text!)!];
                         print("lecturer is \(lecturer)");
                         course["lecturer"] = lecturer;
-                        lecturer!.addUniqueObjectsFromArray([course.objectId!], forKey: "courses")
-                        lecturer!.saveInBackground();
+
                     }
                     if (dateTextField.text != "" && dateTextField.text != nil) {
                         let dateString = dateTextField.text;
@@ -346,7 +345,17 @@ class DetailViewController: UIViewController, UIPickerViewDelegate, UIPickerView
                         course["schedule"] = dateList;
                     }
 
-                    course.saveEventually();
+                    course.saveInBackgroundWithBlock({ (success, error) -> Void in
+                        if success {
+                            if (self.itemTextField.text != "" && self.itemTextField.text != nil) {
+                                lecturer!.addUniqueObjectsFromArray([course.objectId!], forKey: "courses")
+                                lecturer!.saveInBackground();
+                            }
+                        }else{
+                            print(error);
+                        }
+                    })
+                    
                     print("added new course: \(course)");
                 }
             }else{
