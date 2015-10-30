@@ -200,13 +200,130 @@
                     <view key="view" contentMode="scaleToFill" id="tAr-qb-L8o">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="课时" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8IH-1o-eTv">
+                                <rect key="frame" x="20" y="72" width="240" height="50"/>
+                                <animations/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="教室数" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="m6D-JY-tsg">
+                                <rect key="frame" x="20" y="130" width="240" height="50"/>
+                                <animations/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="line" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="U7g-X8-zer">
+                                <rect key="frame" x="268" y="82" width="312" height="30"/>
+                                <animations/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="line" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="l49-PP-WNI">
+                                <rect key="frame" x="268" y="140" width="312" height="30"/>
+                                <animations/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="moi-q0-vio">
+                                <rect key="frame" x="20" y="550" width="560" height="50"/>
+                                <animations/>
+                                <state key="normal" title="开始排课"/>
+                                <connections>
+                                    <action selector="scheduleButtonPressed:" destination="Y57-E4-JCa" eventType="touchUpInside" id="rYa-Ap-PID"/>
+                                </connections>
+                            </button>
+                            <datePicker contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="date" minuteInterval="1" translatesAutoresizingMaskIntoConstraints="NO" id="7Vb-lA-pvx">
+                                <rect key="frame" x="0.0" y="188" width="600" height="154"/>
+                                <animations/>
+                                <date key="date" timeIntervalSinceReferenceDate="467861944.78606498">
+                                    <!--2015-10-30 01:39:04 +0000-->
+                                </date>
+                                <locale key="locale" localeIdentifier="zh"/>
+                            </datePicker>
+                            <datePicker contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="date" minuteInterval="1" translatesAutoresizingMaskIntoConstraints="NO" id="iHq-kW-w0f">
+                                <rect key="frame" x="0.0" y="388" width="600" height="154"/>
+                                <animations/>
+                                <date key="date" timeIntervalSinceReferenceDate="467861944.78606498">
+                                    <!--2015-10-30 01:39:04 +0000-->
+                                </date>
+                                <locale key="locale" localeIdentifier="zh"/>
+                            </datePicker>
+                        </subviews>
                         <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="l49-PP-WNI" firstAttribute="width" secondItem="U7g-X8-zer" secondAttribute="width" id="0FQ-DG-5MA"/>
+                            <constraint firstItem="l49-PP-WNI" firstAttribute="leading" secondItem="U7g-X8-zer" secondAttribute="leading" id="1uC-JP-RKu"/>
+                            <constraint firstItem="U7g-X8-zer" firstAttribute="leading" secondItem="8IH-1o-eTv" secondAttribute="trailing" constant="8" id="4qG-I2-Mbz"/>
+                            <constraint firstItem="7Vb-lA-pvx" firstAttribute="top" secondItem="m6D-JY-tsg" secondAttribute="bottom" constant="8" id="5Nj-RF-FDJ"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="l49-PP-WNI" secondAttribute="trailing" id="5sg-UA-G2j"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="moi-q0-vio" secondAttribute="trailing" id="6Sa-f1-XUv"/>
+                            <constraint firstItem="U7g-X8-zer" firstAttribute="centerY" secondItem="8IH-1o-eTv" secondAttribute="centerY" id="6qm-6r-b8m"/>
+                            <constraint firstItem="iHq-kW-w0f" firstAttribute="top" secondItem="7Vb-lA-pvx" secondAttribute="bottom" id="7AI-gX-Kbf"/>
+                            <constraint firstAttribute="leadingMargin" secondItem="moi-q0-vio" secondAttribute="leading" id="7Yb-o5-zeF"/>
+                            <constraint firstItem="m6D-JY-tsg" firstAttribute="leading" secondItem="8IH-1o-eTv" secondAttribute="leading" id="860-4T-xr6"/>
+                            <constraint firstAttribute="leadingMargin" secondItem="8IH-1o-eTv" secondAttribute="leading" id="8HS-Wy-j3I"/>
+                            <constraint firstItem="2cp-U4-RNR" firstAttribute="top" secondItem="moi-q0-vio" secondAttribute="bottom" id="Bus-0b-1HV"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="7Vb-lA-pvx" secondAttribute="trailing" constant="-20" id="DgW-nX-YRd"/>
+                            <constraint firstItem="iHq-kW-w0f" firstAttribute="width" secondItem="tAr-qb-L8o" secondAttribute="width" id="DvB-qr-HG7"/>
+                            <constraint firstItem="iHq-kW-w0f" firstAttribute="height" secondItem="7Vb-lA-pvx" secondAttribute="height" id="Gdp-WG-GgJ"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="U7g-X8-zer" secondAttribute="trailing" id="Ggs-1V-te0"/>
+                            <constraint firstItem="m6D-JY-tsg" firstAttribute="width" secondItem="8IH-1o-eTv" secondAttribute="width" id="JKg-KZ-x5F"/>
+                            <constraint firstItem="iHq-kW-w0f" firstAttribute="leading" secondItem="tAr-qb-L8o" secondAttribute="leadingMargin" constant="-20" id="NLq-IY-UJT"/>
+                            <constraint firstItem="8IH-1o-eTv" firstAttribute="top" secondItem="KNz-XD-2iO" secondAttribute="bottom" constant="8" id="RNI-fc-rPp"/>
+                            <constraint firstItem="m6D-JY-tsg" firstAttribute="top" secondItem="8IH-1o-eTv" secondAttribute="bottom" constant="8" id="TkY-NW-zkv"/>
+                            <constraint firstItem="U7g-X8-zer" firstAttribute="height" secondItem="8IH-1o-eTv" secondAttribute="height" id="Twn-vy-qGf"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="iHq-kW-w0f" secondAttribute="trailing" constant="-20" id="WXc-Ix-8wF"/>
+                            <constraint firstItem="moi-q0-vio" firstAttribute="centerX" secondItem="tAr-qb-L8o" secondAttribute="centerX" id="j7U-iN-nol"/>
+                            <constraint firstItem="l49-PP-WNI" firstAttribute="centerY" secondItem="m6D-JY-tsg" secondAttribute="centerY" id="n22-fv-tOi"/>
+                            <constraint firstItem="7Vb-lA-pvx" firstAttribute="leading" secondItem="tAr-qb-L8o" secondAttribute="leadingMargin" constant="-20" id="nQ4-Pb-3mz"/>
+                            <constraint firstItem="moi-q0-vio" firstAttribute="centerX" secondItem="tAr-qb-L8o" secondAttribute="centerX" id="nRh-21-X0I"/>
+                            <constraint firstItem="moi-q0-vio" firstAttribute="top" secondItem="iHq-kW-w0f" secondAttribute="bottom" id="p19-FN-b0V"/>
+                            <constraint firstItem="7Vb-lA-pvx" firstAttribute="width" secondItem="tAr-qb-L8o" secondAttribute="width" id="vbJ-9I-sZh"/>
+                            <constraint firstItem="l49-PP-WNI" firstAttribute="height" secondItem="m6D-JY-tsg" secondAttribute="height" id="yeg-LG-oqm"/>
+                            <constraint firstItem="l49-PP-WNI" firstAttribute="leading" secondItem="m6D-JY-tsg" secondAttribute="trailing" constant="8" id="zG8-fM-uPZ"/>
+                        </constraints>
+                        <variation key="default">
+                            <mask key="constraints">
+                                <exclude reference="j7U-iN-nol"/>
+                            </mask>
+                        </variation>
                     </view>
+                    <connections>
+                        <outlet property="courseHoursLabel" destination="8IH-1o-eTv" id="2r2-p8-HEs"/>
+                        <outlet property="courseHoursTextField" destination="U7g-X8-zer" id="L3b-Ab-uqB"/>
+                        <outlet property="endDatePicker" destination="iHq-kW-w0f" id="7R7-NX-cbk"/>
+                        <outlet property="roomNumLabel" destination="m6D-JY-tsg" id="w8P-cx-Eso"/>
+                        <outlet property="roomNumTextField" destination="l49-PP-WNI" id="dgc-vl-G40"/>
+                        <outlet property="startDatePicker" destination="7Vb-lA-pvx" id="s9J-aB-KnG"/>
+                        <segue destination="s6l-mU-FYj" kind="show" identifier="calendarSegue" id="tF3-2e-Zcl"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Jof-xV-l8w" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1150" y="1692"/>
+        </scene>
+        <!--Calendar View Controller-->
+        <scene sceneID="VOI-xr-MKI">
+            <objects>
+                <viewController id="s6l-mU-FYj" customClass="CalendarViewController" customModule="Navigation_Course_Scheduling" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="ZZi-4E-YiH"/>
+                        <viewControllerLayoutGuide type="bottom" id="N6f-rT-ANn"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="3Pw-IM-gsw">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <animations/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="1L5-Xv-7Sd" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2026" y="1698"/>
         </scene>
         <!--Detail View Controller-->
         <scene sceneID="4zG-pq-bK7">
