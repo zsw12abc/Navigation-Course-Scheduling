@@ -32,6 +32,7 @@ class ViewController: UIViewController {
         performSegueWithIdentifier("studentSegue", sender: sender);
     }
     @IBAction func scheduleButtonPressed(sender: UIButton) {
+        performSegueWithIdentifier("scheduleSegue", sender: sender);
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
