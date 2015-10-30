@@ -22,6 +22,18 @@ class CalendarViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        print("startDate: \(startDate)");
+        print("endDate: \(endDate)");
+        print("room num: \(roomNum)");
+        print("course Hours: \(courseHours)");
+        for (var i = 0; startDate! + (i*24).hour <= endDate!; i++){
+//            print(i);
+            if startDate! + (i*24).hour >= endDate! {
+                print(i);
+            }
+        }
+        
+        
         let courseQuery = PFQuery(className: "Course");
         let lecturerQuery = PFQuery(className: "Lecturer");
         let studentQuery = PFQuery(className: "Student");
@@ -60,7 +72,6 @@ class CalendarViewController: UIViewController {
                 print("studentQuery: \(error)");
             }
         }
-
         // Do any additional setup after loading the view.
     }
 

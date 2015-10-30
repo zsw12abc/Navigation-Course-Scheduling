@@ -53,12 +53,22 @@ class ScheduleViewController: UIViewController {
 
 
     @IBAction func scheduleButtonPressed(sender: UIButton) {
+        courseHours = Int(courseHoursTextField.text!);
+        roomNum = Int(roomNumTextField.text!);
+        let dateFormatter = NSDateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        startDate = startDatePicker.date;
+        endDate = endDatePicker.date;
+        let startString = dateFormatter.stringFromDate(startDate!);
+        let endString = dateFormatter.stringFromDate(endDate!);
+        startDate = dateFormatter.dateFromString(startString)!.toTimezone("UTC+10");
+        endDate = dateFormatter.dateFromString(endString)!.toTimezone("UTC+10");
+        print("startDate: \(startDate!) \n endDate: \(endDate!)");
+        print((endDate!  - 1.day) == startDate!);
         if courseHoursTextField.text != "" && roomNumTextField.text != ""{
-            courseHours = Int(courseHoursTextField.text!);
-            roomNum = Int(roomNumTextField.text!);
-            startDate = startDatePicker.date;
-            endDate = endDatePicker.date;
-            performSegueWithIdentifier("calendarSegue", sender: sender);
+            if endDate > startDate {
+                performSegueWithIdentifier("calendarSegue", sender: sender);
+            }
         }
         
     }

@@ -71,17 +71,19 @@ class DetailViewController: UIViewController, UIPickerViewDelegate, UIPickerView
                     let dateArray: Array<NSDate> = itemSelected!["schedule"] as! Array<NSDate>;
                     for d in dateArray {
                         if dateResult == "" {
-                            dateResult = timeToString(d, format: "yyyy-MM-dd HH:mm +1000");
+                            dateResult = timeToString(d, format: "yyyy-MM-dd HH +1000");
                         }else{
-                            dateResult = "\(dateResult); \(timeToString(d, format: "yyyy-MM-dd HH:mm +1000"))";
+                            dateResult = "\(dateResult); \(timeToString(d, format: "yyyy-MM-dd HH +1000"))";
                         }
                     }
                     self.dateTextField.text = dateResult;
                 }
                 //载入exam日期的方法
-                let examResult = itemSelected!["exam"] as! NSDate;
-                let examString = timeToString(examResult, format: "yyyy-MM-dd +1000");
-                examTextField.text = examString;
+                if itemSelected!["exam"] != nil {
+                    let examResult = itemSelected!["exam"] as! NSDate;
+                    let examString = timeToString(examResult, format: "yyyy-MM-dd +1000");
+                    examTextField.text = examString;
+                }
             }else{
                 self.navigationItem.title = "add new \(type!)";
             }
@@ -108,9 +110,9 @@ class DetailViewController: UIViewController, UIPickerViewDelegate, UIPickerView
                     let dateArray: Array<NSDate> = itemSelected!["schedule"] as! Array<NSDate>;
                     for d in dateArray {
                         if dateResult == "" {
-                            dateResult = timeToString(d, format: "yyyy-MM-dd HH:mm +1000");
+                            dateResult = timeToString(d, format: "yyyy-MM-dd HH +1000");
                         }else{
-                            dateResult = "\(dateResult); \(timeToString(d, format: "yyyy-MM-dd HH:mm +1000"))";
+                            dateResult = "\(dateResult); \(timeToString(d, format: "yyyy-MM-dd HH +1000"))";
                         }
                     }
                     self.dateTextField.text = dateResult;
@@ -259,7 +261,7 @@ class DetailViewController: UIViewController, UIPickerViewDelegate, UIPickerView
     func datePickerSelected() {
         print(dateTextField.text);
         let dateFormatter = NSDateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm +1000"
+        dateFormatter.dateFormat = "yyyy-MM-dd HH +1000"
         let date = dateFormatter.stringFromDate(datePicker.date)
         if (dateTextField.text == "") {
             dateTextField.text =  date;
@@ -372,7 +374,7 @@ class DetailViewController: UIViewController, UIPickerViewDelegate, UIPickerView
                         let dateArray = dateString?.componentsSeparatedByString("; ");
                         var dateList = Array<NSDate>();
                         for d in dateArray! {
-                            let date = stringToTime(d, format: "yyyy-MM-dd HH:mm +1000");
+                            let date = stringToTime(d, format: "yyyy-MM-dd HH +1000");
                             dateList.append(date);
                         }
                         print("dateList: \(dateList)");
@@ -419,7 +421,7 @@ class DetailViewController: UIViewController, UIPickerViewDelegate, UIPickerView
                             let dateArray = dateString?.componentsSeparatedByString("; ");
                             var dateList = Array<NSDate>();
                             for d in dateArray! {
-                                let date = self.stringToTime(d, format: "yyyy-MM-dd HH:mm +1000");
+                                let date = self.stringToTime(d, format: "yyyy-MM-dd HH +1000");
                                 dateList.append(date);
                             }
                             print("dateList: \(dateList)");
@@ -456,7 +458,7 @@ class DetailViewController: UIViewController, UIPickerViewDelegate, UIPickerView
                     let dateArray = dateString?.componentsSeparatedByString("; ");
                     var dateList = Array<NSDate>();
                     for d in dateArray! {
-                        let date = stringToTime(d,format: "yyyy-MM-dd HH:mm +1000");
+                        let date = stringToTime(d,format: "yyyy-MM-dd HH +1000");
                         dateList.append(date);
                     }
                     print("dateList: \(dateList)");
@@ -484,7 +486,7 @@ class DetailViewController: UIViewController, UIPickerViewDelegate, UIPickerView
                                 let dateArray = dateString?.componentsSeparatedByString("; ");
                                 var dateList = Array<NSDate>();
                                 for d in dateArray! {
-                                    let date = self.stringToTime(d, format: "yyyy-MM-dd HH:mm +1000");
+                                    let date = self.stringToTime(d, format: "yyyy-MM-dd HH +1000");
                                     dateList.append(date);
                                 }
                                 print("dateList: \(dateList)");
