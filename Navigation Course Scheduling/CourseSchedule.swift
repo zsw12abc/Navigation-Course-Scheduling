@@ -9,7 +9,7 @@
 import UIKit
 import Parse
 
-class hourSchedule<T> {
+class CourseSchedule<T> {
     let columns: Int
     let rows: Int
     
