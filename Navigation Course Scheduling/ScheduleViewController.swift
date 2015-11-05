@@ -63,8 +63,8 @@ class ScheduleViewController: UIViewController {
         let endString = dateFormatter.stringFromDate(endDate!);
         startDate = dateFormatter.dateFromString(startString)!.toTimezone("UTC+10");
         endDate = dateFormatter.dateFromString(endString)!.toTimezone("UTC+10");
-        print("startDate: \(startDate!) \n endDate: \(endDate!)");
-        print((endDate!  - 1.day) == startDate!);
+//        print("startDate: \(startDate!) \n endDate: \(endDate!)");
+//        print((endDate!  - 1.day) == startDate!);
         if courseHoursTextField.text != "" && roomNumTextField.text != ""{
             if endDate > startDate {
                 performSegueWithIdentifier("calendarSegue", sender: sender);
