@@ -434,12 +434,14 @@ class DetailViewController: UIViewController, UIPickerViewDelegate, UIPickerView
                             print("dateList: \(dateList)");
                             course["schedule"] = dateList;
                         } else {
-                            course["schedule"] = [];
+                            course.removeObjectForKey("schedule");
                         }
                         if (self.examTextField.text != ""){
                             let examString = self.examTextField.text;
                             let date = self.stringToTime(examString!, format: "yyyy-MM-dd +1000")
                             course["exam"] = date;
+                        }else{
+                            course.removeObjectForKey("exam");
                         }
                         course.saveEventually();
                         if (self.itemTextField.text != "") {
@@ -485,7 +487,7 @@ class DetailViewController: UIViewController, UIPickerViewDelegate, UIPickerView
                     print("dateList: \(dateList)");
                     lecturer["schedule"] = dateList;
                 } else {
-                    lecturer["schedule"] = [];
+                    lecturer.removeObjectForKey("schedule");
                 }
                 lecturer.saveEventually({ (success, error) -> Void in
                     if success {
@@ -515,7 +517,7 @@ class DetailViewController: UIViewController, UIPickerViewDelegate, UIPickerView
                                 print("dateList: \(dateList)");
                                 lecturer["schedule"] = dateList;
                             } else {
-                                lecturer["schedule"] = [];
+                                lecturer.removeObjectForKey("schedule");
                             }
                             lecturer.saveEventually();
                         }
