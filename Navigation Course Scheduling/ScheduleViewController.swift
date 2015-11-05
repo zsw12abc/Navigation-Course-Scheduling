@@ -32,6 +32,9 @@ class ScheduleViewController: UIViewController {
         courseHoursLabel.textColor = UIColor.redColor();
         roomNumLabel.textColor = UIColor.redColor();
         // Do any additional setup after loading the view.
+        //设置默认输入
+        courseHoursTextField.text = "2";
+        roomNumTextField.text = "3";
     }
 
     override func didReceiveMemoryWarning() {

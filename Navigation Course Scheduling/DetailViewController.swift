@@ -363,13 +363,15 @@ class DetailViewController: UIViewController, UIPickerViewDelegate, UIPickerView
                     let course = PFObject(className:type!);
                     course["name"] = nameTextField.text;
                     course["hours"] = Int(hourTextField.text!);
-                    if (itemTextField.text != "" && itemTextField.text != nil) {
+                    if (itemTextField.text != "") {
                         lecturer = itemList[itemName.indexOf(itemTextField.text!)!];
                         print("lecturer is \(lecturer)");
                         course["lecturer"] = lecturer;
 
+                    }else{
+                        course["lecturer"] = NSNull();
                     }
-                    if (dateTextField.text != "" && dateTextField.text != nil) {
+                    if (dateTextField.text != "") {
                         let dateString = dateTextField.text;
                         let dateArray = dateString?.componentsSeparatedByString("; ");
                         var dateList = Array<NSDate>();
@@ -379,6 +381,8 @@ class DetailViewController: UIViewController, UIPickerViewDelegate, UIPickerView
                         }
                         print("dateList: \(dateList)");
                         course["schedule"] = dateList;
+                    } else {
+                        course["schedule"] = [];
                     }
                     if (examTextField.text != "" && examTextField.text != nil){
                         let examString = examTextField.text;
@@ -409,14 +413,17 @@ class DetailViewController: UIViewController, UIPickerViewDelegate, UIPickerView
                         var lecturer: PFObject?;
                         course["name"] = self.nameTextField.text;
                         course["hours"] = Int(self.hourTextField.text!);
-                        if (self.itemTextField.text != "" && self.itemTextField.text != nil) {
+                        if (self.itemTextField.text != "") {
                             lecturer = self.itemList[self.itemName.indexOf(self.itemTextField.text!)!];
                             print("lecturer is \(lecturer)");
                             if lecturer!.objectId != self.oldLecturerID {
                                 course["lecturer"] = lecturer;
                             }
+                        }else{
+                            //删除课程的lecturer
+                            course.removeObjectForKey("lecturer");
                         }
-                        if (self.dateTextField.text != "" && self.dateTextField.text != nil) {
+                        if (self.dateTextField.text != "") {
                             let dateString = self.dateTextField.text;
                             let dateArray = dateString?.componentsSeparatedByString("; ");
                             var dateList = Array<NSDate>();
@@ -426,23 +433,37 @@ class DetailViewController: UIViewController, UIPickerViewDelegate, UIPickerView
                             }
                             print("dateList: \(dateList)");
                             course["schedule"] = dateList;
+                        } else {
+                            course["schedule"] = [];
                         }
-                        if (self.examTextField.text != "" && self.examTextField.text != nil){
+                        if (self.examTextField.text != ""){
                             let examString = self.examTextField.text;
                             let date = self.stringToTime(examString!, format: "yyyy-MM-dd +1000")
                             course["exam"] = date;
                         }
                         course.saveEventually();
-                        if lecturer!.objectId != self.oldLecturerID {
-                            lecturer!.addUniqueObjectsFromArray([course.objectId!], forKey: "courses");
-                            lecturer!.saveEventually();
+                        if (self.itemTextField.text != "") {
+                            if lecturer!.objectId != self.oldLecturerID {
+                                lecturer!.addUniqueObjectsFromArray([course.objectId!], forKey: "courses");
+                                lecturer!.saveEventually();
+                                for l in self.itemList {
+                                    if l.objectId == self.oldLecturerID {
+                                        l.removeObjectsInArray([course.objectId!], forKey: "courses");
+                                        l.saveEventually();
+                                        print("\(l["name"]) \(self.itemSelected!["lecturer"].objectId) courseID should be removed: \(course.objectId)");
+                                    }
+                                }
+                            }
+                        }else{
+                            //单纯的删除课程的lecturer
                             for l in self.itemList {
                                 if l.objectId == self.oldLecturerID {
                                     l.removeObjectsInArray([course.objectId!], forKey: "courses");
                                     l.saveEventually();
-                                    print("\(l["name"]) \(self.itemSelected!["lecturer"].objectId) courseID should be removed: \(course.objectId)");
+                                    print("\(l["name"]) courseID should be removed: \(course.objectId)");
                                 }
                             }
+
                         }
                     }
                 }
@@ -453,7 +474,7 @@ class DetailViewController: UIViewController, UIPickerViewDelegate, UIPickerView
                 lecturer["name"] = nameTextField.text;
                 lecturer["phone"] = hourTextField.text;
                 lecturer["email"] = itemTextField.text;
-                if (dateTextField.text != "" && dateTextField.text != nil) {
+                if (dateTextField.text != "") {
                     let dateString = dateTextField.text;
                     let dateArray = dateString?.componentsSeparatedByString("; ");
                     var dateList = Array<NSDate>();
@@ -463,6 +484,8 @@ class DetailViewController: UIViewController, UIPickerViewDelegate, UIPickerView
                     }
                     print("dateList: \(dateList)");
                     lecturer["schedule"] = dateList;
+                } else {
+                    lecturer["schedule"] = [];
                 }
                 lecturer.saveEventually({ (success, error) -> Void in
                     if success {
@@ -481,7 +504,7 @@ class DetailViewController: UIViewController, UIPickerViewDelegate, UIPickerView
                             lecturer["name"] = self.nameTextField.text;
                             lecturer["phone"] = self.hourTextField.text;
                             lecturer["email"] = self.itemTextField.text;
-                            if (self.dateTextField.text != "" && self.dateTextField.text != nil) {
+                            if (self.dateTextField.text != "") {
                                 let dateString = self.dateTextField.text;
                                 let dateArray = dateString?.componentsSeparatedByString("; ");
                                 var dateList = Array<NSDate>();
@@ -491,6 +514,8 @@ class DetailViewController: UIViewController, UIPickerViewDelegate, UIPickerView
                                 }
                                 print("dateList: \(dateList)");
                                 lecturer["schedule"] = dateList;
+                            } else {
+                                lecturer["schedule"] = [];
                             }
                             lecturer.saveEventually();
                         }

@@ -120,7 +120,7 @@ class CalendarViewController: UIViewController {
 //        print(calendar!.columns);
 //        print(calendar!.rows);
 //        print(calendar![0,0])
-        print(courseList[0]["lecturer"]["schedule"]);
+//        print(courseList[0]["lecturer"]["schedule"]);
         for var col = 0; col < calendar?.columns; col++ {
             for var row = 0; row < calendar?.rows; row++ {
                 courseSchedule(col, row: row);
@@ -158,13 +158,15 @@ class CalendarViewController: UIViewController {
         //选出可以在这时间上课的课程
         for course in courseList {
             var arrange = true;
-            if course["lecturer"]["schedule"] != nil {
+            if course["lecturer"] != nil{
                 for courseTime in course["lecturer"]["schedule"] as! Array<NSDate> {
                     let courseRealTime = courseTime.toTimezone("UTC+10");
                     if courseRealTime >= time && courseRealTime <= time + 2.hour {
                         arrange = false;
                     }
                 }
+            }else{
+                arrange = false;
             }
             if arrange == true {
                 print("\(course["name"]) can be added to \(time) with schedue \(course["schedule"]) ");
@@ -187,15 +189,25 @@ class CalendarViewController: UIViewController {
             let lecturer2 = availableCourse[1]["lecturer"] as! PFObject;
             var courseShare = true;
             if  lecturer1 != lecturer2 {
-                let students1 = availableCourse[0]["students"] as! Array<String>;
-                let students2 = availableCourse[1]["students"] as! Array<String>;
-                for st1 in students1 {
-                    if students2.contains(st1){
-                        courseShare = false;
+                var students1: Array<String> = [];
+                var students2: Array<String> = [];
+                if (availableCourse[0]["students"] != nil) {
+                    students1 = availableCourse[0]["students"] as! Array<String>;
+                }
+                if (availableCourse[1]["students"] != nil){
+                    students2 = availableCourse[1]["students"] as! Array<String>;
+                }
+                if (students1 != []) && (students2 != [])  {
+                    for st1 in students1 {
+                        if students2.contains(st1){
+                            courseShare = false;
+                            print("\(availableCourse[0]["name"]) and \(availableCourse[1]["name"]) CANT both stay in this time because of same STUDENT")
+                        }
                     }
                 }
-            }else {
+            } else {
                 courseShare = false;
+                print("\(availableCourse[0]["name"]) and \(availableCourse[1]["name"]) CANT both stay in this time because of same LECTURER")
             }
             if courseShare {
                 var courseCoop = Array<PFObject>();
