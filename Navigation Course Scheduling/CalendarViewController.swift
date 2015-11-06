@@ -217,43 +217,64 @@ class CalendarViewController: UIViewController {
                 print("there is two courses available in that time, \(availableCourse[0]["name"]) and \(availableCourse[1]["name"]).")
             }
         }else if availableCourse.count > 2{
-            var courseCalendar : Array<Array<PFObject>>?;
-            //通过set的交集来求课程的学生是不是互斥
-            for (var i = 0; i < availableCourse.count - 2; i++) {
-                var stuISet: Set<String> = [];
-                let lecturerI = availableCourse[i]["lecturer"] as! PFObject;
-                for studentID in availableCourse[i]["students"] as! Array<String> {
-                    stuISet.insert(studentID);
-                }
-                for (let j = i + 1; j < availableCourse.count - 1; i++){
-                    var stuJSet: Set<String> = [];
-                    let lecturerJ = availableCourse[j]["lecturer"] as! PFObject;
-                    for studentID in availableCourse[j]["students"] as! Array<String> {
-                        stuJSet.insert(studentID);
-                    }
-                    for(let k = j + 1; k < availableCourse.count; i++){
-                        var stuKSet: Set<String> = [];
-                        let lecturerK = availableCourse[k]["lecturer"] as! PFObject;
-                        for studentID in availableCourse[k]["students"] as! Array<String> {
-                            stuKSet.insert(studentID);
-                        }
-                        if lecturerI != lecturerJ && lecturerI != lecturerJ && lecturerJ != lecturerK {
-                            if !stuISet.intersect(stuJSet).isEmpty && !stuJSet.intersect(stuKSet).isEmpty && !stuISet.intersect(stuKSet).isEmpty {
-                                var courseCoop = Array<PFObject>();
-                                courseCoop.append(availableCourse[i]);
-                                courseCoop.append(availableCourse[j]);
-                                courseCoop.append(availableCourse[k]);
-                                courseCalendar?.append(courseCoop);
-                                print("\(availableCourse[i]["name"]) \(availableCourse[j]["name"]) \(availableCourse[k]["name"]) CAN be added at same time: \(time)");
-                            }else{
-                                print("\(availableCourse[i]["name"]) \(availableCourse[j]["name"]) \(availableCourse[k]["name"]) CAN NOT be added at same time: \(time) because of same students");
-                            }
-                        }else{
-                            print("\(availableCourse[i]["name"]) \(availableCourse[j]["name"]) \(availableCourse[k]["name"]) CAN NOT be added at same time: \(time) because of same lecturer \(availableCourse[i]["lecturer"]["name"])");
-                        }
+            var availableCourseArray : Array<Array<PFObject>> = [];
+            var courseArray = availableCourse;
+            for var i = 0; i < courseArray.count; i++ {
+                var availableCell: Array<PFObject> = [];
+                let courseI = courseArray[i];
+                availableCell.append(courseI);
+                for var l = 1 + i; l < courseArray.count; l++ {
+                    let courseL = courseArray[l];
+                    if courseL["lecturer"].objectId == courseI["lecturer"].objectId {
+                        availableCell.append(courseL);
+                        courseArray.removeAtIndex(l);
+//                        print("\(courseI["lecturer"]["name"]) available: \(availableCell)")
                     }
                 }
+                availableCourseArray.append(availableCell)
             }
+            print(availableCourseArray[0]);
+            
+            for var i = 0; i < numRoom; i++ {
+                print(availableCourseArray[i]);
+            }
+//            var courseCalendar : Array<Array<PFObject>>?;
+//            //通过set的交集来求课程的学生是不是互斥
+//            for (var i = 0; i < availableCourse.count - 2; i++) {
+//                var stuISet: Set<String> = [];
+//                let lecturerI = availableCourse[i]["lecturer"] as! PFObject;
+//                for studentID in availableCourse[i]["students"] as! Array<String> {
+//                    stuISet.insert(studentID);
+//                }
+//                for (let j = i + 1; j < availableCourse.count - 1; i++){
+//                    var stuJSet: Set<String> = [];
+//                    let lecturerJ = availableCourse[j]["lecturer"] as! PFObject;
+//                    for studentID in availableCourse[j]["students"] as! Array<String> {
+//                        stuJSet.insert(studentID);
+//                    }
+//                    for(let k = j + 1; k < availableCourse.count; i++){
+//                        var stuKSet: Set<String> = [];
+//                        let lecturerK = availableCourse[k]["lecturer"] as! PFObject;
+//                        for studentID in availableCourse[k]["students"] as! Array<String> {
+//                            stuKSet.insert(studentID);
+//                        }
+//                        if lecturerI != lecturerJ && lecturerI != lecturerJ && lecturerJ != lecturerK {
+//                            if !stuISet.intersect(stuJSet).isEmpty && !stuJSet.intersect(stuKSet).isEmpty && !stuISet.intersect(stuKSet).isEmpty {
+//                                var courseCoop = Array<PFObject>();
+//                                courseCoop.append(availableCourse[i]);
+//                                courseCoop.append(availableCourse[j]);
+//                                courseCoop.append(availableCourse[k]);
+//                                courseCalendar?.append(courseCoop);
+//                                print("\(availableCourse[i]["name"]) \(availableCourse[j]["name"]) \(availableCourse[k]["name"]) CAN be added at same time: \(time)");
+//                            }else{
+//                                print("\(availableCourse[i]["name"]) \(availableCourse[j]["name"]) \(availableCourse[k]["name"]) CAN NOT be added at same time: \(time) because of same students");
+//                            }
+//                        }else{
+//                            print("\(availableCourse[i]["name"]) \(availableCourse[j]["name"]) \(availableCourse[k]["name"]) CAN NOT be added at same time: \(time) because of same lecturer \(availableCourse[i]["lecturer"]["name"])");
+//                        }
+//                    }
+//                }
+//            }
         }
     }
     /*
