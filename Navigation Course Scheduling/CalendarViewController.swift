@@ -47,56 +47,10 @@ class CalendarViewController: UIViewController {
         
         calendar = CourseSchedule<Array<PFObject>>(columns: totalDays, rows: 12/(courseHours!+1));
         
-//        for (var col = 0; col < calendar!.columns; col++){
-//            for(var row = 0; row < calendar!.rows; row++){
-//                print(calendar![col, row]);
-//            }
-//            print("*******");
-//        }
         
         let courseQuery = PFQuery(className: "Course");
         let lecturerQuery = PFQuery(className: "Lecturer");
         let studentQuery = PFQuery(className: "Student");
-//        courseQuery.findObjectsInBackgroundWithBlock { (courses, error) -> Void in
-//            if error == nil {
-//               if let courses = courses{
-//                    for course in courses {
-//                        self.courseList.append(course);
-//                        self.totalHours = self.totalHours + (course["hours"] as! Int);
-//                    }
-//                }
-//                print("Total Hours are: \(self.totalHours)hours");
-//                if self.totalHours > self.totalDays * 8 * self.roomNum!{
-//                    print("not enought time")
-//                }else{
-//                    print("enought time")
-//                }
-//            }else{
-//                print("courseQuery: \(error)");
-//            }
-//        }
-//        lecturerQuery.findObjectsInBackgroundWithBlock { (lecturers, error) -> Void in
-//            if error == nil {
-//                if let lecturers = lecturers {
-//                    for lecturer in lecturers{
-//                        self.lecturerList.append(lecturer);
-//                    }
-//                }
-//            } else {
-//                print("lecturerQuery: \(error)");
-//            }
-//        }
-//        studentQuery.findObjectsInBackgroundWithBlock { (students, error) -> Void in
-//            if error == nil {
-//                if let students = students {
-//                    for student in  students {
-//                        self.studentList.append(student);
-//                    }
-//                }
-//            }else {
-//                print("studentQuery: \(error)");
-//            }
-//        }
         // Do any additional setup after loading the view.
         do{
             let courses = try courseQuery.findObjects() as [PFObject];
@@ -114,13 +68,7 @@ class CalendarViewController: UIViewController {
         }catch{
             print(error);
         }
-//        print("courseList: \(courseList)");
         courseList = sortCourse(courseList);
-//        print("sortCourse: \(courseList)");
-//        print(calendar!.columns);
-//        print(calendar!.rows);
-//        print(calendar![0,0])
-//        print(courseList[0]["lecturer"]["schedule"]);
         for var col = 0; col < calendar?.columns; col++ {
             for var row = 0; row < calendar?.rows; row++ {
                 courseSchedule(col, row: row);
@@ -238,43 +186,6 @@ class CalendarViewController: UIViewController {
             for var i = 0; i < numRoom; i++ {
                 print(availableCourseArray[i]);
             }
-//            var courseCalendar : Array<Array<PFObject>>?;
-//            //通过set的交集来求课程的学生是不是互斥
-//            for (var i = 0; i < availableCourse.count - 2; i++) {
-//                var stuISet: Set<String> = [];
-//                let lecturerI = availableCourse[i]["lecturer"] as! PFObject;
-//                for studentID in availableCourse[i]["students"] as! Array<String> {
-//                    stuISet.insert(studentID);
-//                }
-//                for (let j = i + 1; j < availableCourse.count - 1; i++){
-//                    var stuJSet: Set<String> = [];
-//                    let lecturerJ = availableCourse[j]["lecturer"] as! PFObject;
-//                    for studentID in availableCourse[j]["students"] as! Array<String> {
-//                        stuJSet.insert(studentID);
-//                    }
-//                    for(let k = j + 1; k < availableCourse.count; i++){
-//                        var stuKSet: Set<String> = [];
-//                        let lecturerK = availableCourse[k]["lecturer"] as! PFObject;
-//                        for studentID in availableCourse[k]["students"] as! Array<String> {
-//                            stuKSet.insert(studentID);
-//                        }
-//                        if lecturerI != lecturerJ && lecturerI != lecturerJ && lecturerJ != lecturerK {
-//                            if !stuISet.intersect(stuJSet).isEmpty && !stuJSet.intersect(stuKSet).isEmpty && !stuISet.intersect(stuKSet).isEmpty {
-//                                var courseCoop = Array<PFObject>();
-//                                courseCoop.append(availableCourse[i]);
-//                                courseCoop.append(availableCourse[j]);
-//                                courseCoop.append(availableCourse[k]);
-//                                courseCalendar?.append(courseCoop);
-//                                print("\(availableCourse[i]["name"]) \(availableCourse[j]["name"]) \(availableCourse[k]["name"]) CAN be added at same time: \(time)");
-//                            }else{
-//                                print("\(availableCourse[i]["name"]) \(availableCourse[j]["name"]) \(availableCourse[k]["name"]) CAN NOT be added at same time: \(time) because of same students");
-//                            }
-//                        }else{
-//                            print("\(availableCourse[i]["name"]) \(availableCourse[j]["name"]) \(availableCourse[k]["name"]) CAN NOT be added at same time: \(time) because of same lecturer \(availableCourse[i]["lecturer"]["name"])");
-//                        }
-//                    }
-//                }
-//            }
         }
     }
     /*
