@@ -182,10 +182,6 @@ class CalendarViewController: UIViewController {
                 availableCourseArray.append(availableCell)
             }
             print(availableCourseArray[0]);
-            
-            for var i = 0; i < numRoom; i++ {
-                print(availableCourseArray[i]);
-            }
         }
     }
     /*
