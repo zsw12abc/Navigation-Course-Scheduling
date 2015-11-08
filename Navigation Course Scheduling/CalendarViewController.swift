@@ -106,7 +106,7 @@ class CalendarViewController: UIViewController {
         //选出可以在这时间上课的课程
         for course in courseList {
             var arrange = true;
-            if course["lecturer"] != nil{
+            if course["lecturer"] != nil && course["schedule"].count * courseHours! < course["hours"] as! Int{
                 for courseTime in course["lecturer"]["schedule"] as! Array<NSDate> {
                     let courseRealTime = courseTime.toTimezone("UTC+10");
                     if courseRealTime >= time && courseRealTime <= time + 2.hour {
@@ -182,6 +182,14 @@ class CalendarViewController: UIViewController {
                 availableCourseArray.append(availableCell)
             }
             print(availableCourseArray[0]);
+            
+            if availableCourseArray.count < numRoom {
+                for availableCell in availableCourseArray {
+                    for course in availableCell{
+                        print(course);
+                    }
+                }
+            }
         }
     }
     /*
