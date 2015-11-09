@@ -212,10 +212,14 @@ class CalendarViewController: UIViewController {
         for var i = index + 1; i < availableCourseArray.count; i++ {
             let availableCell = availableCourseArray[i];
             for courseChosen in availableCell {
-                let courseChosenStudents : Set = Set(courseChosen["students"] as! Array<String>);
+                print("courseChosen \(courseChosen["students"])");
+                let courseChosenStudents : Set = fromArrayToSet(courseChosen["students"] as! Array<String>);
+                print("courseChosenStudents \(courseChosenStudents)")
                 var noRepeat = true;
                 for getCourse in resultArray {
-                    let getCourseStudents : Set = Set(getCourse["students"] as! Array<String>);
+                    print("getCourse \(getCourse["students"][0])");
+                    let getCourseStudents : Set = fromArrayToSet(getCourse["students"] as! Array<String>);
+                    print("getCourseStudents \(getCourseStudents)");
                     if courseChosenStudents.intersect(getCourseStudents).isEmpty == false {
                         noRepeat = false;
                     }
@@ -226,6 +230,20 @@ class CalendarViewController: UIViewController {
             }
         }
         return resultArray;
+    }
+    
+    func fromArrayToSet(inputArray : Array<String>) -> Set<String>{
+        var inputSet : Set<String> = Set<String>();
+        for input in inputArray {
+            if ((input as? String) != nil) {
+                inputSet.insert(input);
+            }
+            if ((input as? Array<String>) != nil) {
+                let result = input as! Array<String>;
+                inputSet.insert(result[0]);
+            }
+        }
+        return inputSet;
     }
     
     /*
