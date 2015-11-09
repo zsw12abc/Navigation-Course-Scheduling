@@ -182,16 +182,52 @@ class CalendarViewController: UIViewController {
                 availableCourseArray.append(availableCell)
             }
             print(availableCourseArray[0]);
-            
-            if availableCourseArray.count < numRoom {
-                for availableCell in availableCourseArray {
-                    for course in availableCell{
-                        print(course);
+            var finalList : Array<Array<PFObject>> = [];
+            for var index = 0; index < availableCourseArray.count; index++ {
+                let availableCell = availableCourseArray[index] ;
+                for var i = 0; i < availableCell.count; i++ {
+                    let noRepeatCourse = findNoRepeatCourse(availableCell[i], availableCourseArray: availableCourseArray, index: index);
+                    if noRepeatCourse.count > 1 {
+                        finalList.append(noRepeatCourse);
                     }
                 }
             }
+            var finalChosen: Array<PFObject> = [];
+            for courseChosen in finalList {
+                if courseChosen.count == numRoom {
+                    finalChosen = courseChosen;
+                    break;
+                }
+            }
+            if finalChosen != [] {
+                print(finalChosen);
+            }
         }
     }
+    
+    //用来检查是否满足学生不重复的课程筛选
+    func findNoRepeatCourse(course: PFObject, availableCourseArray: Array<Array<PFObject>>,index: Int) -> Array<PFObject>{
+        var resultArray : Array<PFObject> = [];
+        resultArray.append(course);
+        for var i = index + 1; i < availableCourseArray.count; i++ {
+            let availableCell = availableCourseArray[i];
+            for courseChosen in availableCell {
+                let courseChosenStudents : Set = Set(courseChosen["students"] as! Array<String>);
+                var noRepeat = true;
+                for getCourse in resultArray {
+                    let getCourseStudents : Set = Set(getCourse["students"] as! Array<String>);
+                    if courseChosenStudents.intersect(getCourseStudents).isEmpty == false {
+                        noRepeat = false;
+                    }
+                }
+                if noRepeat {
+                    resultArray.append(courseChosen);
+                }
+            }
+        }
+        return resultArray;
+    }
+    
     /*
     // MARK: - Navigation
 
