@@ -384,11 +384,14 @@ class DetailViewController: UIViewController, UIPickerViewDelegate, UIPickerView
                     } else {
                         course["schedule"] = [];
                     }
-                    if (examTextField.text != "" && examTextField.text != nil){
+                    if (examTextField.text != ""){
                         let examString = examTextField.text;
                         let date = stringToTime(examString!, format: "yyyy-MM-dd +1000")
                         course["exam"] = date;
+                    }else{
+                        course["exam"] = NSNull();
                     }
+                    course["students"] = [];
 
                     course.saveInBackgroundWithBlock({ (success, error) -> Void in
                         if success {
