@@ -181,7 +181,7 @@ class CalendarViewController: UIViewController {
                 }
                 availableCourseArray.append(availableCell)
             }
-            print(availableCourseArray[0]);
+//            print(availableCourseArray[0]);
             var finalList : Array<Array<PFObject>> = [];
             for var index = 0; index < availableCourseArray.count; index++ {
                 let availableCell = availableCourseArray[index] ;
@@ -192,15 +192,20 @@ class CalendarViewController: UIViewController {
                     }
                 }
             }
+            print("here is the final chosen");
             var finalChosen: Array<PFObject> = [];
             for courseChosen in finalList {
-                if courseChosen.count == numRoom {
+                if courseChosen.count <= numRoom {
                     finalChosen = courseChosen;
                     break;
+                }else{
+                    for var i = 0; i < numRoom; i++ {
+                        finalChosen.append(courseChosen[i]);
+                    }
                 }
             }
             if finalChosen != [] {
-                print(finalChosen);
+                print("finalChosen: \(finalChosen)");
             }
         }
     }
@@ -212,14 +217,14 @@ class CalendarViewController: UIViewController {
         for var i = index + 1; i < availableCourseArray.count; i++ {
             let availableCell = availableCourseArray[i];
             for courseChosen in availableCell {
-                print("courseChosen \(courseChosen["students"])");
+//                print("courseChosen \(courseChosen["students"])");
                 let courseChosenStudents : Set = fromArrayToSet(courseChosen["students"]);
-                print("courseChosenStudents \(courseChosenStudents)")
+//                print("courseChosenStudents \(courseChosenStudents)")
                 var noRepeat = true;
                 for getCourse in resultArray {
-                    print("getCourse \(getCourse["students"])");
+//                    print("getCourse \(getCourse["students"])");
                     let getCourseStudents : Set = fromArrayToSet(getCourse["students"]);
-                    print("getCourseStudents \(getCourseStudents)");
+//                    print("getCourseStudents \(getCourseStudents)");
                     if courseChosenStudents.intersect(getCourseStudents).isEmpty == false {
                         noRepeat = false;
                     }
@@ -233,7 +238,7 @@ class CalendarViewController: UIViewController {
     }
     
     func fromArrayToSet(inputArray : AnyObject?) -> Set<String>{
-        print("inputArray: \(inputArray!)");
+//        print("inputArray: \(inputArray!)");
         var inputSet : Set<String> = Set<String>();
             for input in inputArray as! Array<String> {
                 inputSet.insert(input);
