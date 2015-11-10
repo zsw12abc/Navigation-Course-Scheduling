@@ -437,7 +437,7 @@ class DetailViewController: UIViewController, UIPickerViewDelegate, UIPickerView
                             print("dateList: \(dateList)");
                             course["schedule"] = dateList;
                         } else {
-                            course.removeObjectForKey("schedule");
+                            course["schedule"] = [];
                         }
                         if (self.examTextField.text != ""){
                             let examString = self.examTextField.text;
