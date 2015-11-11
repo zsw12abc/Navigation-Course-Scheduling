@@ -122,10 +122,10 @@ class CalendarViewController: UIViewController {
                 courseCell.append(course);
             }
         }
-        arrangeCourse(courseCell, numRoom: roomNum!);
+        arrangeCourse(courseCell, numRoom: roomNum!, time: time);
     }
     
-    func arrangeCourse(availableCourse: Array<PFObject>, numRoom:Int){
+    func arrangeCourse(availableCourse: Array<PFObject>, numRoom:Int, time:NSDate){
         var courseCalendar : Array<Array<PFObject>>?;
         if availableCourse.count == 1 {
             var courseCoop = Array<PFObject>();
@@ -205,7 +205,19 @@ class CalendarViewController: UIViewController {
                 }
             }
             if finalChosen != [] {
-                print("finalChosen: \(finalChosen)");
+                print("finalChosen:");
+                for course in finalChosen {
+                    print("\(course["name"]) at \(time)");
+                    var courseScheduleAdd =  course["schedule"] as! Array<NSDate>;
+                    courseScheduleAdd.append(time);
+                    for oldCourse in courseList{
+                        if(course.objectId == oldCourse.objectId){
+//                            var addSchedule = oldCourse["schedule"] as! Array<NSDate>;
+                            oldCourse.addObjectsFromArray([time], forKey: "schedule");
+                            print("oldcourse: \(oldCourse["name"]): \(oldCourse["schedule"])")
+                        }
+                    }
+                }
             }
         }
     }
