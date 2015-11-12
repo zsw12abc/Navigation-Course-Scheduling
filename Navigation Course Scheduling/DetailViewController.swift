@@ -555,7 +555,7 @@ class DetailViewController: UIViewController, UIPickerViewDelegate, UIPickerView
                                 query.getObjectInBackgroundWithId(course.objectId!) {
                                     (course: PFObject?, error: NSError?) -> Void in
                                     if error == nil && course != nil {
-                                        course!.addUniqueObject([student.objectId!], forKey: "students");
+                                        course!.addUniqueObjectsFromArray([student.objectId!], forKey: "students");
                                         course!.saveEventually();
                                     } else {
                                         print(error)
