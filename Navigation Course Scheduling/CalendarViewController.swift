@@ -22,6 +22,8 @@ class CalendarViewController: UIViewController {
     var totalDays: Int = 0;
     var calendar: CourseSchedule<Array<PFObject>>?;
 
+    @IBOutlet weak var resultTextView: UITextView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 //        var calendar: Array<hourSchedule<PFObject>>?;
@@ -73,6 +75,10 @@ class CalendarViewController: UIViewController {
             for var row = 0; row < calendar?.rows; row++ {
                 courseSchedule(col, row: row);
             }
+        }
+        
+        for course in courseList {
+            resultTextView.text = "\(resultTextView.text) \n\(course["name"]):  \(course["schedule"])"
         }
 
     }
@@ -132,6 +138,14 @@ class CalendarViewController: UIViewController {
             courseCoop.append(availableCourse[0]);
             courseCalendar?.append(courseCoop);
             print("there is only one course available in that time, \(availableCourse[0]["name"]).")
+            for oldCourse in courseList{
+                if(availableCourse[0].objectId == oldCourse.objectId){
+                    //                            var addSchedule = oldCourse["schedule"] as! Array<NSDate>;
+                    oldCourse.addObjectsFromArray([time], forKey: "schedule");
+                    print("oldcourse: \(oldCourse["name"]): \(oldCourse["schedule"])")
+                }
+            }
+
         }else if availableCourse.count == 2{
             let lecturer1 = availableCourse[0]["lecturer"] as! PFObject;
             let lecturer2 = availableCourse[1]["lecturer"] as! PFObject;
@@ -163,6 +177,19 @@ class CalendarViewController: UIViewController {
                 courseCoop.append(availableCourse[1]);
                 courseCalendar?.append(courseCoop);
                 print("there is two courses available in that time, \(availableCourse[0]["name"]) and \(availableCourse[1]["name"]).")
+                for oldCourse in courseList{
+                    if(availableCourse[0].objectId == oldCourse.objectId){
+                        //                            var addSchedule = oldCourse["schedule"] as! Array<NSDate>;
+                        oldCourse.addObjectsFromArray([time], forKey: "schedule");
+                        print("oldcourse: \(oldCourse["name"]): \(oldCourse["schedule"])")
+                    }
+                    if(availableCourse[1].objectId == oldCourse.objectId){
+                        //                            var addSchedule = oldCourse["schedule"] as! Array<NSDate>;
+                        oldCourse.addObjectsFromArray([time], forKey: "schedule");
+                        print("oldcourse: \(oldCourse["name"]): \(oldCourse["schedule"])")
+                    }
+                }
+
             }
         }else if availableCourse.count > 2{
             var availableCourseArray : Array<Array<PFObject>> = [];
@@ -204,6 +231,7 @@ class CalendarViewController: UIViewController {
                     }
                 }
             }
+            //导入已选择的课程时间
             if finalChosen != [] {
                 print("finalChosen:");
                 for course in finalChosen {
