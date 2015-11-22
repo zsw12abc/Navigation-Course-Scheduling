@@ -189,7 +189,8 @@ class CalendarViewController: UIViewController {
                         print("oldcourse: \(oldCourse["name"]): \(oldCourse["schedule"])")
                     }
                 }
-
+            }else{
+                //两门课互斥
             }
         }else if availableCourse.count > 2{
             var availableCourseArray : Array<Array<PFObject>> = [];
