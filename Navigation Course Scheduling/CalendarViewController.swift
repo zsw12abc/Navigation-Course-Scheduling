@@ -191,6 +191,14 @@ class CalendarViewController: UIViewController {
                 }
             }else{
                 //两门课互斥
+                for oldCourse in courseList{
+                    if(availableCourse[0].objectId == oldCourse.objectId){
+                        //                            var addSchedule = oldCourse["schedule"] as! Array<NSDate>;
+                        oldCourse.addObjectsFromArray([time], forKey: "schedule");
+                        print("oldcourse: \(oldCourse["name"]): \(oldCourse["schedule"])")
+                    }
+                }
+
             }
         }else if availableCourse.count > 2{
             var availableCourseArray : Array<Array<PFObject>> = [];
